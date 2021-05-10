@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<!-- saved from url=(0040)https://exoplayer.dev/media-sources.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async="" src="./Media sources - ExoPlayer_files/async-ads.js"></script><script async="" src="./Media sources - ExoPlayer_files/async-ads.js"></script><script type="text/javascript" async="" src="./Media sources - ExoPlayer_files/f.txt"></script><script type="text/javascript" async="" src="./Media sources - ExoPlayer_files/analytics.js"></script><script async="" src="./Media sources - ExoPlayer_files/js"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'UA-68257324-1');
+		
+			gtag('config', 'UA-68257324-1', { 'anonymize_ip': true });
+		
+	</script>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Media sources - ExoPlayer</title>
+
+<meta name="description" content="An application level media player for Android">
+<link rel="canonical" href="https://exoplayer.dev/media-sources.html"><link rel="alternate" type="application/rss+xml" title="ExoPlayer" href="https://exoplayer.dev/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="https://exoplayer.dev/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="https://exoplayer.dev/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="https://exoplayer.dev/assets/favicon-16x16.png"><link rel="manifest" href="https://exoplayer.dev/assets/site.webmanifest"><link rel="mask-icon" href="https://exoplayer.dev/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="https://exoplayer.dev/assets/favicon.ico">
+
+<meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
+
+<meta name="theme-color" content="#ffffff">
+<!-- end favicons snippet -->
+<link rel="stylesheet" href="./Media sources - ExoPlayer_files/main.css"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"><!-- start custom head snippets -->
+<style rel="stylesheet" type="text/css">
+.gsc-result .gs-title {
+  line-height: 1.4em;
+}
+</style>
+<!-- end custom head snippets -->
+<script>(function() {
+  window.isArray = function(val) {
+    return Object.prototype.toString.call(val) === '[object Array]';
+  };
+  window.isString = function(val) {
+    return typeof val === 'string';
+  };
+
+  window.decodeUrl = function(str) {
+    return str ? decodeURIComponent(str.replace(/\+/g, '%20')) : '';
+  };
+
+  window.hasEvent = function(event) {
+    return 'on'.concat(event) in window.document;
+  };
+
+  window.isOverallScroller = function(node) {
+    return node === document.documentElement || node === document.body || node === window;
+  };
+
+  window.isFormElement = function(node) {
+    var tagName = node.tagName;
+    return tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA';
+  };
+
+  window.pageLoad = (function () {
+    var loaded = false, cbs = [];
+    window.addEventListener('load', function () {
+      var i;
+      loaded = true;
+      if (cbs.length > 0) {
+        for (i = 0; i < cbs.length; i++) {
+          cbs[i]();
+        }
+      }
+    });
+    return {
+      then: function(cb) {
+        cb && (loaded ? cb() : (cbs.push(cb)));
+      }
+    };
+  })();
+})();(function() {
+  window.throttle = function(func, wait) {
+    var args, result, thisArg, timeoutId, lastCalled = 0;
+
+    function trailingCall() {
+      lastCalled = new Date;
+      timeoutId = null;
+      result = func.apply(thisArg, args);
+    }
+    return function() {
+      var now = new Date,
+        remaining = wait - (now - lastCalled);
+
+      args = arguments;
+      thisArg = this;
+
+      if (remaining <= 0) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+        lastCalled = now;
+        result = func.apply(thisArg, args);
+      } else if (!timeoutId) {
+        timeoutId = setTimeout(trailingCall, remaining);
+      }
+      return result;
+    };
+  };
+})();(function() {
+  var Set = (function() {
+    var add = function(item) {
+      var i, data = this._data;
+      for (i = 0; i < data.length; i++) {
+        if (data[i] === item) {
+          return;
+        }
+      }
+      this.size ++;
+      data.push(item);
+      return data;
+    };
+
+    var Set = function(data) {
+      this.size = 0;
+      this._data = [];
+      var i;
+      if (data.length > 0) {
+        for (i = 0; i < data.length; i++) {
+          add.call(this, data[i]);
+        }
+      }
+    };
+    Set.prototype.add = add;
+    Set.prototype.get = function(index) { return this._data[index]; };
+    Set.prototype.has = function(item) {
+      var i, data = this._data;
+      for (i = 0; i < data.length; i++) {
+        if (this.get(i) === item) {
+          return true;
+        }
+      }
+      return false;
+    };
+    Set.prototype.is = function(map) {
+      if (map._data.length !== this._data.length) { return false; }
+      var i, j, flag, tData = this._data, mData = map._data;
+      for (i = 0; i < tData.length; i++) {
+        for (flag = false, j = 0; j < mData.length; j++) {
+          if (tData[i] === mData[j]) {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) { return false; }
+      }
+      return true;
+    };
+    Set.prototype.values = function() {
+      return this._data;
+    };
+    return Set;
+  })();
+
+  window.Lazyload = (function(doc) {
+    var queue = {js: [], css: []}, sources = {js: {}, css: {}}, context = this;
+    var createNode = function(name, attrs) {
+      var node = doc.createElement(name), attr;
+      for (attr in attrs) {
+        if (attrs.hasOwnProperty(attr)) {
+          node.setAttribute(attr, attrs[attr]);
+        }
+      }
+      return node;
+    };
+    var end = function(type, url) {
+      var s, q, qi, cbs, i, j, cur, val, flag;
+      if (type === 'js' || type ==='css') {
+        s = sources[type], q = queue[type];
+        s[url] = true;
+        for (i = 0; i < q.length; i++) {
+          cur = q[i];
+          if (cur.urls.has(url)) {
+            qi = cur, val = qi.urls.values();
+            qi && (cbs = qi.callbacks);
+            for (flag = true, j = 0; j < val.length; j++) {
+              cur = val[j];
+              if (!s[cur]) {
+                flag = false;
+              }
+            }
+            if (flag && cbs && cbs.length > 0) {
+              for (j = 0; j < cbs.length; j++) {
+                cbs[j].call(context);
+              }
+              qi.load = true;
+            }
+          }
+        }
+      }
+    };
+    var load = function(type, urls, callback) {
+      var s, q, qi, node, i, cur,
+        _urls = typeof urls === 'string' ? new Set([urls]) : new Set(urls), val, url;
+      if (type === 'js' || type ==='css') {
+        s = sources[type], q = queue[type];
+        for (i = 0; i < q.length; i++) {
+          cur = q[i];
+          if (_urls.is(cur.urls)) {
+            qi = cur;
+            break;
+          }
+        }
+        val = _urls.values();
+        if (qi) {
+          callback && (qi.load || qi.callbacks.push(callback));
+          callback && (qi.load && callback());
+        } else {
+          q.push({
+            urls: _urls,
+            callbacks: callback ? [callback] : [],
+            load: false
+          });
+          for (i = 0; i < val.length; i++) {
+            node = null, url = val[i];
+            if (s[url] === undefined) {
+              (type === 'js' ) && (node = createNode('script', { src: url }));
+              (type === 'css') && (node = createNode('link', { rel: 'stylesheet', href: url }));
+              if (node) {
+                node.onload = (function(type, url) {
+                  return function() {
+                    end(type, url);
+                  };
+                })(type, url);
+                (doc.head || doc.body).appendChild(node);
+                s[url] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+    return {
+      js: function(url, callback) {
+        load('js', url, callback);
+      },
+      css: function(url, callback) {
+        load('css', url, callback);
+      }
+    };
+  })(this.document);
+})();</script><script>
+  (function() {
+    var TEXT_VARIABLES = {
+      version: '2.2.4',
+      sources: {
+        font_awesome: 'https://use.fontawesome.com/releases/v5.0.13/css/all.css',
+        jquery: 'https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',
+        leancloud_js_sdk: '//cdn1.lncld.net/static/js/3.4.1/av-min.js',
+        chart: 'https://cdn.bootcss.com/Chart.js/2.7.2/Chart.bundle.min.js',
+        gitalk: {
+          js: 'https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.js',
+          css: 'https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.css'
+        },
+        valine: 'https://unpkg.com/valine/dist/Valine.min.js',
+        mathjax: 'https://cdn.bootcss.com/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML',
+        mermaid: 'https://cdn.bootcss.com/mermaid/8.0.0-rc.8/mermaid.min.js'
+      },
+      site: {
+        toc: {
+          selectors: 'h1,h2,h3'
+        }
+      },
+      paths: {
+        search_js: '/assets/search.js'
+      }
+    };
+    window.TEXT_VARIABLES = TEXT_VARIABLES;
+  })();
+</script><script src="./Media sources - ExoPlayer_files/jquery.min.js"></script><script src="./Media sources - ExoPlayer_files/cse_element__en.js" type="text/javascript"></script><link type="text/css" rel="stylesheet" href="./Media sources - ExoPlayer_files/default+en.css"><link type="text/css" rel="stylesheet" href="./Media sources - ExoPlayer_files/default.css"><style type="text/css">.gsc-control-cse{font-family:roboto, arial, sans-serif}.gsc-control-cse .gsc-table-result{font-family:roboto, arial, sans-serif}.gsc-refinementsGradient{background:linear-gradient(to left,rgba(255,255,255,1),rgba(255,255,255,0))}.gsc-control-cse{border-color:#FFFFFF;background-color:#FFFFFF}input.gsc-input,.gsc-input-box,.gsc-input-box-hover,.gsc-input-box-focus{border-color:#D9D9D9}.gsc-search-button-v2,.gsc-search-button-v2:hover,.gsc-search-button-v2:focus{border-color:#666666;background-color:#CECECE;background-image:none;filter:none}.gsc-search-button-v2 svg{fill:#FFFFFF}.gsc-tabHeader.gsc-tabhActive,.gsc-refinementHeader.gsc-refinementhActive{color:#CCCCCC;border-color:#CCCCCC;background-color:#FFFFFF}.gsc-tabHeader.gsc-tabhInactive,.gsc-refinementHeader.gsc-refinementhInactive{color:#CCCCCC;border-color:#CCCCCC;background-color:#FFFFFF}.gsc-webResult.gsc-result,.gsc-results .gsc-imageResult{border-color:#FFFFFF;background-color:#FFFFFF}.gsc-webResult.gsc-result:hover{border-color:#FFFFFF;background-color:#FFFFFF}.gs-webResult.gs-result a.gs-title:link,.gs-webResult.gs-result a.gs-title:link b,.gs-imageResult a.gs-title:link,.gs-imageResult a.gs-title:link b{color:#F8343F}.gs-webResult.gs-result a.gs-title:visited,.gs-webResult.gs-result a.gs-title:visited b,.gs-imageResult a.gs-title:visited,.gs-imageResult a.gs-title:visited b{color:#F8343F}.gs-webResult.gs-result a.gs-title:hover,.gs-webResult.gs-result a.gs-title:hover b,.gs-imageResult a.gs-title:hover,.gs-imageResult a.gs-title:hover b{color:#F8343F}.gs-webResult.gs-result a.gs-title:active,.gs-webResult.gs-result a.gs-title:active b,.gs-imageResult a.gs-title:active,.gs-imageResult a.gs-title:active b{color:#F8343F}.gsc-cursor-page{color:#F8343F}a.gsc-trailing-more-results:link{color:#F8343F}.gs-webResult .gs-snippet,.gs-fileFormatType{color:#000000}.gs-webResult div.gs-visibleUrl{color:#000000}.gs-webResult div.gs-visibleUrl-short{color:#000000}.gs-webResult div.gs-visibleUrl-short{display:none}.gs-webResult div.gs-visibleUrl-long{display:block}.gs-promotion div.gs-visibleUrl-short{display:none}.gs-promotion div.gs-visibleUrl-long{display:block}.gsc-cursor-box{border-color:#FFFFFF}.gsc-results .gsc-cursor-box .gsc-cursor-page{border-color:#CCCCCC;background-color:#FFFFFF;color:#CCCCCC}.gsc-results .gsc-cursor-box .gsc-cursor-current-page{border-color:#CCCCCC;background-color:#FFFFFF;color:#CCCCCC}.gsc-webResult.gsc-result.gsc-promotion{border-color:#336699;background-color:#FFFFFF}.gsc-completion-title{color:#F8343F}.gsc-completion-snippet{color:#000000}.gs-promotion a.gs-title:link,.gs-promotion a.gs-title:link *,.gs-promotion .gs-snippet a:link{color:#0000CC}.gs-promotion a.gs-title:visited,.gs-promotion a.gs-title:visited *,.gs-promotion .gs-snippet a:visited{color:#0000CC}.gs-promotion a.gs-title:hover,.gs-promotion a.gs-title:hover *,.gs-promotion .gs-snippet a:hover{color:#0000CC}.gs-promotion a.gs-title:active,.gs-promotion a.gs-title:active *,.gs-promotion .gs-snippet a:active{color:#0000CC}.gs-promotion .gs-snippet,.gs-promotion .gs-title .gs-promotion-title-right,.gs-promotion .gs-title .gs-promotion-title-right *{color:#000000}.gs-promotion .gs-visibleUrl,.gs-promotion .gs-visibleUrl-short{color:#008000}.gcsc-find-more-on-google{color:#F8343F}.gcsc-find-more-on-google-magnifier{fill:#F8343F}</style><style type="text/css">.gscb_a{display:inline-block;font:27px/13px arial,sans-serif}.gsst_a .gscb_a{color:#a1b9ed;cursor:pointer}.gsst_a:hover .gscb_a,.gsst_a:focus .gscb_a{color:#36c}.gsst_a{display:inline-block}.gsst_a{cursor:pointer;padding:0 4px}.gsst_a:hover{text-decoration:none!important}.gsst_b{font-size:16px;padding:0 2px;position:relative;user-select:none;-webkit-user-select:none;white-space:nowrap}.gsst_e{vertical-align:middle;opacity:0.55;}.gsst_a:hover .gsst_e,.gsst_a:focus .gsst_e{opacity:0.72;}.gsst_a:active .gsst_e{opacity:1;}.gsst_f{background:white;text-align:left}.gsst_g{background-color:white;border:1px solid #ccc;border-top-color:#d9d9d9;box-shadow:0 2px 4px rgba(0,0,0,0.2);-webkit-box-shadow:0 2px 4px rgba(0,0,0,0.2);margin:-1px -3px;padding:0 6px}.gsst_h{background-color:white;height:1px;margin-bottom:-1px;position:relative;top:-1px}.gsib_a{width:100%;padding:4px 6px 0}.gsib_a,.gsib_b{vertical-align:top}.gssb_c{border:0;position:absolute;z-index:989}.gssb_e{border:1px solid #ccc;border-top-color:#d9d9d9;box-shadow:0 2px 4px rgba(0,0,0,0.2);-webkit-box-shadow:0 2px 4px rgba(0,0,0,0.2);cursor:default}.gssb_f{visibility:hidden;white-space:nowrap}.gssb_k{border:0;display:block;position:absolute;top:0;z-index:988}.gsdd_a{border:none!important}.gsq_a{padding:0}.gssb_a{padding:0 7px}.gssb_a,.gssb_a td{white-space:nowrap;overflow:hidden;line-height:22px}#gssb_b{font-size:11px;color:#36c;text-decoration:none}#gssb_b:hover{font-size:11px;color:#36c;text-decoration:underline}.gssb_g{text-align:center;padding:8px 0 7px;position:relative}.gssb_h{font-size:15px;height:28px;margin:0.2em;-webkit-appearance:button}.gssb_i{background:#eee}.gss_ifl{visibility:hidden;padding-left:5px}.gssb_i .gss_ifl{visibility:visible}a.gssb_j{font-size:13px;color:#36c;text-decoration:none;line-height:100%}a.gssb_j:hover{text-decoration:underline}.gssb_l{height:1px;background-color:#e5e5e5}.gssb_m{color:#000;background:#fff}.gssb_a{padding:0 9px}.gsib_a{padding:5px 9px 4px 9px}.gscb_a{line-height:27px}.gssb_e{border:0}.gssb_l{margin:5px 0}input.gsc-input::-webkit-input-placeholder{font-size:14px}input.gsc-input:-moz-placeholder{font-size:14px}input.gsc-input::-moz-placeholder{font-size:14px}input.gsc-input:-ms-input-placeholder{font-size:14px}input.gsc-input:focus::-webkit-input-placeholder{color:transparent}input.gsc-input:focus:-moz-placeholder{color:transparent}input.gsc-input:focus::-moz-placeholder{color:transparent}input.gsc-input:focus:-ms-input-placeholder{color:transparent}.gssb_c .gsc-completion-container{position:static}.gssb_c{z-index:5000}.gsc-completion-container table{background:transparent;font-size:inherit;font-family:inherit}.gssb_c > tbody > tr,.gssb_c > tbody > tr > td,.gssb_d,.gssb_d > tbody > tr,.gssb_d > tbody > tr > td,.gssb_e,.gssb_e > tbody > tr,.gssb_e > tbody > tr > td{padding:0;margin:0;border:0}.gssb_a table,.gssb_a table tr,.gssb_a table tr td{padding:0;margin:0;border:0}</style><style type="text/css">.gscb_a{display:inline-block;font:27px/13px arial,sans-serif}.gsst_a .gscb_a{color:#a1b9ed;cursor:pointer}.gsst_a:hover .gscb_a,.gsst_a:focus .gscb_a{color:#36c}.gsst_a{display:inline-block}.gsst_a{cursor:pointer;padding:0 4px}.gsst_a:hover{text-decoration:none!important}.gsst_b{font-size:16px;padding:0 2px;position:relative;user-select:none;-webkit-user-select:none;white-space:nowrap}.gsst_e{vertical-align:middle;opacity:0.55;}.gsst_a:hover .gsst_e,.gsst_a:focus .gsst_e{opacity:0.72;}.gsst_a:active .gsst_e{opacity:1;}.gsst_f{background:white;text-align:left}.gsst_g{background-color:white;border:1px solid #ccc;border-top-color:#d9d9d9;box-shadow:0 2px 4px rgba(0,0,0,0.2);-webkit-box-shadow:0 2px 4px rgba(0,0,0,0.2);margin:-1px -3px;padding:0 6px}.gsst_h{background-color:white;height:1px;margin-bottom:-1px;position:relative;top:-1px}.gsib_a{width:100%;padding:4px 6px 0}.gsib_a,.gsib_b{vertical-align:top}.gssb_c{border:0;position:absolute;z-index:989}.gssb_e{border:1px solid #ccc;border-top-color:#d9d9d9;box-shadow:0 2px 4px rgba(0,0,0,0.2);-webkit-box-shadow:0 2px 4px rgba(0,0,0,0.2);cursor:default}.gssb_f{visibility:hidden;white-space:nowrap}.gssb_k{border:0;display:block;position:absolute;top:0;z-index:988}.gsdd_a{border:none!important}.gsq_a{padding:0}.gssb_a{padding:0 7px}.gssb_a,.gssb_a td{white-space:nowrap;overflow:hidden;line-height:22px}#gssb_b{font-size:11px;color:#36c;text-decoration:none}#gssb_b:hover{font-size:11px;color:#36c;text-decoration:underline}.gssb_g{text-align:center;padding:8px 0 7px;position:relative}.gssb_h{font-size:15px;height:28px;margin:0.2em;-webkit-appearance:button}.gssb_i{background:#eee}.gss_ifl{visibility:hidden;padding-left:5px}.gssb_i .gss_ifl{visibility:visible}a.gssb_j{font-size:13px;color:#36c;text-decoration:none;line-height:100%}a.gssb_j:hover{text-decoration:underline}.gssb_l{height:1px;background-color:#e5e5e5}.gssb_m{color:#000;background:#fff}.gssb_a{padding:0 9px}.gsib_a{padding:5px 9px 4px 9px}.gscb_a{line-height:27px}.gssb_e{border:0}.gssb_l{margin:5px 0}input.gsc-input::-webkit-input-placeholder{font-size:14px}input.gsc-input:-moz-placeholder{font-size:14px}input.gsc-input::-moz-placeholder{font-size:14px}input.gsc-input:-ms-input-placeholder{font-size:14px}input.gsc-input:focus::-webkit-input-placeholder{color:transparent}input.gsc-input:focus:-moz-placeholder{color:transparent}input.gsc-input:focus::-moz-placeholder{color:transparent}input.gsc-input:focus:-ms-input-placeholder{color:transparent}.gssb_c .gsc-completion-container{position:static}.gssb_c{z-index:5000}.gsc-completion-container table{background:transparent;font-size:inherit;font-family:inherit}.gssb_c > tbody > tr,.gssb_c > tbody > tr > td,.gssb_d,.gssb_d > tbody > tr,.gssb_d > tbody > tr > td,.gssb_e,.gssb_e > tbody > tr,.gssb_e > tbody > tr > td{padding:0;margin:0;border:0}.gssb_a table,.gssb_a table tr,.gssb_a table tr td{padding:0;margin:0;border:0}</style></head>
+  <body data-gr-c-s-loaded="true">
+    <div class="root" data-is-touch="false">
+      <div class="layout--page layout--page--sidebar clearfix js-page-root">
+  <div class="page__mask d-print-none js-page-mask js-sidebar-hide"></div>
+  <div class="page__viewport">
+    <div class="page__actions d-print-none">
+      <div class="button button--circle button--lg box-shadow-2 sidebar-button js-sidebar-show">
+        <i class="fas fa-bars icon--show"></i>
+      </div>
+    </div>
+
+    <div class="grid page__grid">
+
+      <div class="page__sidebar d-print-none"><div class="sidebar-toc"><ul class="toc toc--navigator"><li class="toc-h1"></li><li class="toc-h2"><a href="https://exoplayer.dev/">Home</a></li><li class="toc-h2"><a href="https://exoplayer.dev/pros-and-cons.html">Pros and cons</a></li><li class="toc-h2"><a href="https://exoplayer.dev/demo-application.html">Demo application</a></li><li class="toc-h2"><a href="https://exoplayer.dev/supported-formats.html">Supported formats</a></li><li class="toc-h2"><a href="https://exoplayer.dev/supported-devices.html">Supported devices</a></li><li class="toc-h2"><a href="https://exoplayer.dev/glossary.html">Glossary</a></li><li class="toc-h1">Getting started</li><li class="toc-h2"><a href="https://exoplayer.dev/hello-world.html">Hello world</a></li><li class="toc-h2"><a href="https://exoplayer.dev/listening-to-player-events.html">Listening to player events</a></li><li class="toc-h2 active"><a href="https://exoplayer.dev/media-sources.html">Media sources</a></li><li class="toc-h2"><a href="https://exoplayer.dev/playlists.html">Playlists</a></li><li class="toc-h2"><a href="https://exoplayer.dev/track-selection.html">Track selection</a></li><li class="toc-h2"><a href="https://exoplayer.dev/ui-components.html">UI components</a></li><li class="toc-h2"><a href="https://exoplayer.dev/downloading-media.html">Downloading media</a></li><li class="toc-h2"><a href="https://exoplayer.dev/ad-insertion.html">Ad insertion</a></li><li class="toc-h1">Media types</li><li class="toc-h2"><a href="https://exoplayer.dev/dash.html">DASH</a></li><li class="toc-h2"><a href="https://exoplayer.dev/hls.html">HLS</a></li><li class="toc-h2"><a href="https://exoplayer.dev/smoothstreaming.html">SmoothStreaming</a></li><li class="toc-h2"><a href="https://exoplayer.dev/progressive.html">Progressive</a></li><li class="toc-h1">Advanced topics</li><li class="toc-h2"><a href="https://exoplayer.dev/drm.html">Digital rights management</a></li><li class="toc-h2"><a href="https://exoplayer.dev/troubleshooting.html">Troubleshooting</a></li><li class="toc-h2"><a href="https://exoplayer.dev/customization.html">Customization</a></li><li class="toc-h2"><a href="https://exoplayer.dev/battery-consumption.html">Battery consumption</a></li><li class="toc-h2"><a href="https://exoplayer.dev/shrinking.html">APK shrinking</a></li><li class="toc-h2"><a href="https://exoplayer.dev/oems.html">OEM testing</a></li><li class="toc-h2"><a href="https://exoplayer.dev/design-documents.html">Design documents</a></li></ul></div></div><div class="page__main js-page-main cell cell--auto">
+
+      <div class="page__main-inner"><div class="page__header d-print-none"><header class="header"><div class="main">
+      <div class="header__title">
+        <div class="header__brand"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 123.97"><defs><style>.cls-1{fill:none;}.cls-2{fill:#757576;}.cls-3{fill:#212120;}.cls-4{fill:#fff;}.cls-5{fill:#616262;}</style></defs><title>Asset 3</title><g id="Layer_2" data-name="Layer 2"><g id="Logo"><path class="cls-1" d="M59.57,47.36a2.21,2.21,0,0,0,0-.37V27.83l0,.07Z"></path><path class="cls-2" d="M17.24,47.77A13.08,13.08,0,1,1,37.16,31.38a12.7,12.7,0,0,1,1.51,4.14,2.82,2.82,0,0,0,3.77,2.07L59.57,27.7,13.73,1.23A9.1,9.1,0,0,0,.09,9.11V61.88l16.64-9.52A2.85,2.85,0,0,0,17.24,47.77Z"></path><path class="cls-2" d="M.28,61.93H.09l.09,0Z"></path><path class="cls-3" d="M38.65,88.62a13,13,0,0,1-2.39,5.43,13.09,13.09,0,1,1-19-17.79,2.83,2.83,0,0,0-.49-4.58L.09,62v52.82a9.1,9.1,0,0,0,13.64,7.88L59.48,96.33l-16.6-9.59A2.85,2.85,0,0,0,38.65,88.62Z"></path><polygon class="cls-3" points="0.09 61.93 0.09 62.04 0.18 61.98 0.09 61.93"></polygon><path class="cls-4" d="M55.87,74.39A13.09,13.09,0,1,1,50.33,49a12.94,12.94,0,0,1,5.55.68,2.82,2.82,0,0,0,3.69-2.33V27.9l0-.07h0l0,0V27.7L42.44,37.59a2.82,2.82,0,0,1-3.77-2.07,12.7,12.7,0,0,0-1.51-4.14A13.09,13.09,0,1,0,17.24,47.77a2.85,2.85,0,0,1-.51,4.59L.09,61.88l-.09,0H.28l-.1,0L.09,62l16.7,9.64a2.83,2.83,0,0,1,.49,4.58,13.08,13.08,0,1,0,19,17.79,13,13,0,0,0,2.39-5.43,2.85,2.85,0,0,1,4.23-1.88l16.6,9.59.09,0V76.72A2.82,2.82,0,0,0,55.87,74.39Z"></path><path class="cls-5" d="M105.45,54.16,59.62,27.7h0v.13h0V47a2.21,2.21,0,0,1,0,.37,2.82,2.82,0,0,1-3.69,2.33A12.94,12.94,0,0,0,50.33,49a13.08,13.08,0,1,0,5.54,25.38,2.82,2.82,0,0,1,3.7,2.33,2.21,2.21,0,0,1,0,.37V96.38h0l45.83-26.46A9.1,9.1,0,0,0,105.45,54.16Z"></path></g></g></svg><a title="An application level media player for Android" href="https://exoplayer.dev/">ExoPlayer</a></div><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></div><nav class="navigation">
+        <ul><li class="navigation__item"><a href="https://exoplayer.dev/doc/reference/" target="_blank" rel="noopener noreferrer">Javadoc</a></li><li class="navigation__item"><a href="https://github.com/google/ExoPlayer" target="_blank" rel="noopener noreferrer">GitHub</a></li><li class="navigation__item"><a href="https://medium.com/google-exoplayer" target="_blank" rel="noopener noreferrer">Blog</a></li><li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li></ul>
+      </nav></div>
+  </header>
+</div><div class="page__content"><div class="main"><div class="grid grid--reverse">
+
+              <div class="col-aside d-print-none js-col-aside"></div>
+
+              <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
+
+<!-- end custom main top snippet --><article itemscope="" itemtype="http://schema.org/Article"><div class="article__header"><header><h1>Media sources</h1></header></div><meta itemprop="headline" content="Media sources"><meta itemprop="author" content="ExoPlayer"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+
+<!-- end custom article top snippet --><div class="article__content" itemprop="articleBody"><p>In ExoPlayer every piece of media is represented by <code class="language-plaintext highlighter-rouge">MediaSource</code>. The ExoPlayer
+library provides <code class="language-plaintext highlighter-rouge">MediaSource</code> implementations for several stream types:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">DashMediaSource</code> for <a href="https://exoplayer.dev/dash.html">DASH</a>.</li>
+  <li><code class="language-plaintext highlighter-rouge">SsMediaSource</code> for <a href="https://exoplayer.dev/smoothstreaming.html">SmoothStreaming</a>.</li>
+  <li><code class="language-plaintext highlighter-rouge">HlsMediaSource</code> for <a href="https://exoplayer.dev/hls.html">HLS</a>.</li>
+  <li><code class="language-plaintext highlighter-rouge">ProgressiveMediaSource</code> for <a href="https://exoplayer.dev/progressive.html">regular media files</a>.</li>
+</ul>
+
+<p>Examples of instantiating all four can be found in <code class="language-plaintext highlighter-rouge">PlayerActivity</code> in the <a href="https://github.com/google/ExoPlayer/tree/release-v2/demos/main/">main
+demo app</a>.</p>
+
+<h2 id="mediasource-composition">MediaSource composition<a class="anchor d-print-none" aria-hidden="true"><i class="fas fa-anchor"></i></a></h2>
+
+<p>In addition to the MediaSource implementations described above, the ExoPlayer
+library also provides <code class="language-plaintext highlighter-rouge">ConcatenatingMediaSource</code>, <code class="language-plaintext highlighter-rouge">ClippingMediaSource</code>,
+<code class="language-plaintext highlighter-rouge">LoopingMediaSource</code> and <code class="language-plaintext highlighter-rouge">MergingMediaSource</code>. These <code class="language-plaintext highlighter-rouge">MediaSource</code>
+implementations enable more complex playback functionality through composition.
+Some of the common use cases are described below. Note that although some of the
+following examples are described in the context of video playback, they apply
+equally to audio only playback too, and indeed to the playback of any supported
+media type(s).</p>
+
+<h3 id="playing-a-playlist">Playing a playlist<a class="anchor d-print-none" aria-hidden="true"><i class="fas fa-anchor"></i></a></h3>
+
+<p>Playlists are supported using <code class="language-plaintext highlighter-rouge">ConcatenatingMediaSource</code>, which enables
+sequential playback of multiple <code class="language-plaintext highlighter-rouge">MediaSource</code>s. It’s possible to dynamically
+modify a playlist by adding, removing and moving <code class="language-plaintext highlighter-rouge">MediaSource</code>s within a
+<code class="language-plaintext highlighter-rouge">ConcatenatingMediaSource</code> during playback. See the <a href="https://exoplayer.dev/playlists.html">Playlists page</a> for more
+information.</p>
+
+<h3 id="clipping-a-video">Clipping a video<a class="anchor d-print-none" aria-hidden="true"><i class="fas fa-anchor"></i></a></h3>
+
+<p><code class="language-plaintext highlighter-rouge">ClippingMediaSource</code> can be used to clip a <code class="language-plaintext highlighter-rouge">MediaSource</code> so that only part of
+it is played. The following example clips a video playback to start at 5 seconds
+and end at 10 seconds.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">MediaSource</span> <span class="n">videoSource</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="nc">ProgressiveMediaSource</span><span class="o">.</span><span class="na">Factory</span><span class="o">(...).</span><span class="na">createMediaSource</span><span class="o">(</span><span class="n">videoUri</span><span class="o">);</span>
+<span class="c1">// Clip to start at 5 seconds and end at 10 seconds.</span>
+<span class="nc">ClippingMediaSource</span> <span class="n">clippingSource</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="nf">ClippingMediaSource</span><span class="o">(</span>
+        <span class="n">videoSource</span><span class="o">,</span>
+        <span class="cm">/* startPositionUs= */</span> <span class="mi">5_000_000</span><span class="o">,</span>
+        <span class="cm">/* endPositionUs= */</span> <span class="mi">10_000_000</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>To clip only the start of the source, <code class="language-plaintext highlighter-rouge">endPositionUs</code> can be set to
+<code class="language-plaintext highlighter-rouge">C.TIME_END_OF_SOURCE</code>. To clip only to a particular duration, there is a
+constructor that takes a <code class="language-plaintext highlighter-rouge">durationUs</code> argument.</p>
+
+<p class="info">When clipping the start of a video file, try to align the start position with a
+keyframe if possible. If the start position is not aligned with a keyframe then
+the player will need to decode and discard data from the previous keyframe up to
+the start position before playback can begin. This will introduce a short delay
+at the start of playback, including when the player transitions to playing the
+<code class="language-plaintext highlighter-rouge">ClippingMediaSource</code> as part of a playlist or due to looping.</p>
+
+<h3 id="looping-a-video">Looping a video<a class="anchor d-print-none" aria-hidden="true"><i class="fas fa-anchor"></i></a></h3>
+
+<p class="info">To loop indefinitely, it is better to use <code class="language-plaintext highlighter-rouge">ExoPlayer.setRepeatMode</code> than
+<code class="language-plaintext highlighter-rouge">LoopingMediaSource</code>.</p>
+
+<p>A video can be seamlessly looped a fixed number of times using a
+<code class="language-plaintext highlighter-rouge">LoopingMediaSource</code>. The following example plays a video twice.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">MediaSource</span> <span class="n">source</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="nc">ProgressiveMediaSource</span><span class="o">.</span><span class="na">Factory</span><span class="o">(...).</span><span class="na">createMediaSource</span><span class="o">(</span><span class="n">videoUri</span><span class="o">);</span>
+<span class="c1">// Plays the video twice.</span>
+<span class="nc">LoopingMediaSource</span> <span class="n">loopingSource</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LoopingMediaSource</span><span class="o">(</span><span class="n">source</span><span class="o">,</span> <span class="mi">2</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h3 id="side-loading-a-subtitle-file">Side-loading a subtitle file<a class="anchor d-print-none" aria-hidden="true"><i class="fas fa-anchor"></i></a></h3>
+
+<p>Given a video file and a separate subtitle file, <code class="language-plaintext highlighter-rouge">MergingMediaSource</code> can be
+used to merge them into a single source for playback.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Build the video MediaSource.</span>
+<span class="nc">MediaSource</span> <span class="n">videoSource</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="nc">ProgressiveMediaSource</span><span class="o">.</span><span class="na">Factory</span><span class="o">(...).</span><span class="na">createMediaSource</span><span class="o">(</span><span class="n">videoUri</span><span class="o">);</span>
+<span class="c1">// Build the subtitle MediaSource.</span>
+<span class="nc">Format</span> <span class="n">subtitleFormat</span> <span class="o">=</span> <span class="nc">Format</span><span class="o">.</span><span class="na">createTextSampleFormat</span><span class="o">(</span>
+    <span class="n">id</span><span class="o">,</span> <span class="c1">// An identifier for the track. May be null.</span>
+    <span class="nc">MimeTypes</span><span class="o">.</span><span class="na">APPLICATION_SUBRIP</span><span class="o">,</span> <span class="c1">// The mime type. Must be set correctly.</span>
+    <span class="n">selectionFlags</span><span class="o">,</span> <span class="c1">// Selection flags for the track.</span>
+    <span class="n">language</span><span class="o">);</span> <span class="c1">// The subtitle language. May be null.</span>
+<span class="nc">MediaSource</span> <span class="n">subtitleSource</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="nc">SingleSampleMediaSource</span><span class="o">.</span><span class="na">Factory</span><span class="o">(...)</span>
+        <span class="o">.</span><span class="na">createMediaSource</span><span class="o">(</span><span class="n">subtitleUri</span><span class="o">,</span> <span class="n">subtitleFormat</span><span class="o">,</span> <span class="no">C</span><span class="o">.</span><span class="na">TIME_UNSET</span><span class="o">);</span>
+<span class="c1">// Plays the video with the sideloaded subtitle.</span>
+<span class="nc">MergingMediaSource</span> <span class="n">mergedSource</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="nf">MergingMediaSource</span><span class="o">(</span><span class="n">videoSource</span><span class="o">,</span> <span class="n">subtitleSource</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h2 id="advanced-composition">Advanced composition<a class="anchor d-print-none" aria-hidden="true"><i class="fas fa-anchor"></i></a></h2>
+
+<p>It’s possible to further combine composite <code class="language-plaintext highlighter-rouge">MediaSource</code>s for more unusual use
+cases. Given two videos A and B, the following example shows how
+<code class="language-plaintext highlighter-rouge">LoopingMediaSource</code> and <code class="language-plaintext highlighter-rouge">ConcatenatingMediaSource</code> can be used together to play
+the sequence (A,A,B).</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">MediaSource</span> <span class="n">firstSource</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="nc">ProgressiveMediaSource</span><span class="o">.</span><span class="na">Factory</span><span class="o">(...).</span><span class="na">createMediaSource</span><span class="o">(</span><span class="n">firstVideoUri</span><span class="o">);</span>
+<span class="nc">MediaSource</span> <span class="n">secondSource</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="nc">ProgressiveMediaSource</span><span class="o">.</span><span class="na">Factory</span><span class="o">(...).</span><span class="na">createMediaSource</span><span class="o">(</span><span class="n">secondVideoUri</span><span class="o">);</span>
+<span class="c1">// Plays the first video twice.</span>
+<span class="nc">LoopingMediaSource</span> <span class="n">firstSourceTwice</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LoopingMediaSource</span><span class="o">(</span><span class="n">firstSource</span><span class="o">,</span> <span class="mi">2</span><span class="o">);</span>
+<span class="c1">// Plays the first video twice, then the second video.</span>
+<span class="nc">ConcatenatingMediaSource</span> <span class="n">concatenatedSource</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="nf">ConcatenatingMediaSource</span><span class="o">(</span><span class="n">firstSourceTwice</span><span class="o">,</span> <span class="n">secondSource</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>The following example is equivalent, demonstrating that there can be more than
+one way of achieving the same result.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">MediaSource</span> <span class="n">firstSource</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="nc">ProgressiveMediaSource</span><span class="o">.</span><span class="na">Factory</span><span class="o">(...).</span><span class="na">createMediaSource</span><span class="o">(</span><span class="n">firstVideoUri</span><span class="o">);</span>
+<span class="nc">MediaSource</span> <span class="n">secondSource</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="nc">ProgressiveMediaSource</span><span class="o">.</span><span class="na">Factory</span><span class="o">(...).</span><span class="na">createMediaSource</span><span class="o">(</span><span class="n">secondVideoUri</span><span class="o">);</span>
+<span class="c1">// Plays the first video twice, then the second video.</span>
+<span class="nc">ConcatenatingMediaSource</span> <span class="n">concatenatedSource</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="nf">ConcatenatingMediaSource</span><span class="o">(</span><span class="n">firstSource</span><span class="o">,</span> <span class="n">firstSource</span><span class="o">,</span> <span class="n">secondSource</span><span class="o">);</span>
+</code></pre></div></div>
+
+</div><div class="d-print-none"><footer class="article__footer"><!-- start custom article footer snippet -->
+
+<!-- end custom article footer snippet --></footer><div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="https://exoplayer.dev/listening-to-player-events.html">Listening to player events</a></div><div class="next"><span>NEXT</span><a href="https://exoplayer.dev/playlists.html">Playlists</a></div></div></div>
+
+</div>
+
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    $(function() {
+      var $this ,$scroll;
+      var $articleContent = $('.js-article-content');
+      var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+      var scroll = hasSidebar ? '.js-page-main' : 'html, body';
+      $scroll = $(scroll);
+
+      $articleContent.find('.highlight').each(function() {
+        $this = $(this);
+        $this.attr('data-lang', $this.find('code').attr('data-lang'));
+      });
+      $articleContent.find('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]').each(function() {
+        $this = $(this);
+        $this.append($('<a class="anchor d-print-none" aria-hidden="true"></a>').html('<i class="fas fa-anchor"></i>'));
+      });
+      $articleContent.on('click', '.anchor', function() {
+        $scroll.scrollToAnchor('#' + $(this).parent().attr('id'), 400);
+      });
+    });
+  });
+})();</script></div><section class="page__comments d-print-none"></section></article><!-- start custom main bottom snippet -->
+
+<!-- end custom main bottom snippet --></div>
+            </div></div></div><div class="page__footer d-print-none">
+<footer class="footer py-4 js-page-footer">
+  <div class="main"><div itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ExoPlayer"><meta itemprop="url" content="/"><div class="footer__author-links"><div class="author-links">
+  <ul class="menu menu--nowrap menu--inline"><li title="Follow us on Medium.">
+        <a class="button button--circle medium-button" itemprop="sameAs" href="https://medium.com/google-exoplayer" target="_blank" rel="noopener noreferrer">
+          <div class="icon"><svg fill="#000000" width="24px" height="24px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M834.7 279.8l61.3-58.9V208H683.7L532.4 586.4 360.3 208H137.7v12.9l71.6 86.6c7 6.4 10.6 15.8 9.7 25.2V673c2.2 12.3-1.7 24.8-10.3 33.7L128 805v12.7h228.6v-12.9l-80.6-98a39.99 39.99 0 0 1-11.1-33.7V378.7l200.7 439.2h23.3l172.6-439.2v349.9c0 9.2 0 11.1-6 17.2l-62.1 60.3V819h301.2v-12.9l-59.9-58.9c-5.2-4-7.9-10.7-6.8-17.2V297a18.1 18.1 0 0 1 6.8-17.2z"></path>
+</svg></div>
+        </a>
+      </li><li title="Follow us on Github.">
+        <a class="button button--circle github-button" itemprop="sameAs" href="https://github.com/google/ExoPlayer" target="_blank" rel="noopener noreferrer">
+          <div class="icon"><svg fill="#000000" width="24px" height="24px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path class="svgpath" data-index="path_0" fill="#272636" d="M0 525.2c0 223.6 143.3 413.7 343 483.5 26.9 6.8 22.8-12.4 22.8-25.4l0-88.7c-155.3 18.2-161.5-84.6-172-101.7-21.1-36-70.8-45.2-56-62.3 35.4-18.2 71.4 4.6 113.1 66.3 30.2 44.7 89.1 37.2 119 29.7 6.5-26.9 20.5-50.9 39.7-69.6C248.8 728.2 181.7 630 181.7 513.2c0-56.6 18.7-108.7 55.3-150.7-23.3-69.3 2.2-128.5 5.6-137.3 66.5-6 135.5 47.6 140.9 51.8 37.8-10.2 80.9-15.6 129.1-15.6 48.5 0 91.8 5.6 129.8 15.9 12.9-9.8 77-55.8 138.8-50.2 3.3 8.8 28.2 66.7 6.3 135 37.1 42.1 56 94.6 56 151.4 0 117-67.5 215.3-228.8 243.7 26.9 26.6 43.6 63.4 43.6 104.2l0 128.8c0.9 10.3 0 20.5 17.2 20.5C878.1 942.4 1024 750.9 1024 525.3c0-282.9-229.3-512-512-512C229.1 13.2 0 242.3 0 525.2L0 525.2z"></path>
+</svg>
+</div>
+        </a>
+      </li></ul>
+</div>
+</div>
+    </div><div class="site-info mt-2">
+      <div>© ExoPlayer 2019,
+        Powered by <a title="Jekyll is a simple, blog-aware, static site generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="TeXt is a super customizable Jekyll theme." href="https://github.com/kitian616/jekyll-TeXt-theme">TeXt Theme</a>.
+      </div>
+    </div>
+  </div>
+</footer></div></div>
+    </div></div></div><script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $body = $('body'), $window = $(window);
+    var $pageRoot = $('.js-page-root'), $pageMain = $('.js-page-main');
+    var activeCount = 0;
+    function modal(options) {
+      var $root = this, visible, onChange, hideWhenWindowScroll = false;
+      var scrollTop;
+      function setOptions(options) {
+        var _options = options || {};
+        visible = _options.initialVisible === undefined ? false : show;
+        onChange = _options.onChange;
+        hideWhenWindowScroll = _options.hideWhenWindowScroll;
+      }
+      function init() {
+        setState(visible);
+      }
+      function setState(isShow) {
+        if (isShow === visible) {
+          return;
+        }
+        visible = isShow;
+        if (visible) {
+          activeCount++;
+          scrollTop = $(window).scrollTop() || $pageMain.scrollTop();
+          $root.addClass('modal--show');
+          $pageMain.scrollTop(scrollTop);
+          activeCount === 1 && ($pageRoot.addClass('show-modal'), $body.addClass('of-hidden'));
+          hideWhenWindowScroll && window.hasEvent('touchstart') && $window.on('scroll', hide);
+          $window.on('keyup', handleKeyup);
+        } else {
+          activeCount > 0 && activeCount--;
+          $root.removeClass('modal--show');
+          $window.scrollTop(scrollTop);
+          activeCount === 0 && ($pageRoot.removeClass('show-modal'), $body.removeClass('of-hidden'));
+          hideWhenWindowScroll && window.hasEvent('touchstart') && $window.off('scroll', hide);
+          $window.off('keyup', handleKeyup);
+        }
+        onChange && onChange(visible);
+      }
+      function show() {
+        setState(true);
+      }
+      function hide() {
+        setState(false);
+      }
+      function handleKeyup(e) {
+        // Char Code: 27  ESC
+        if (e.which ===  27) {
+          hide();
+        }
+      }
+      setOptions(options);
+      init();
+      return {
+        show: show,
+        hide: hide,
+        $el: $root
+      };
+    }
+    $.fn.modal = modal;
+  });
+})();</script><div class="modal modal--overflow page__search-modal d-print-none js-page-search-modal"><script>window.useDefaultSearchBox = false;</script><script>
+(function () {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    // search panel
+    var search = (window.search || (window.search = {}));
+    var useDefaultSearchBox = window.useDefaultSearchBox === undefined ?
+      true : window.useDefaultSearchBox ;
+
+    var $searchModal = $('.js-page-search-modal');
+    var $searchToggle = $('.js-search-toggle');
+    var searchModal = $searchModal.modal({ onChange: handleModalChange, hideWhenWindowScroll: true });
+    var modalVisible = false;
+    search.searchModal = searchModal;
+
+    var $searchBox = null;
+    var $searchInput = null;
+    var $searchClear = null;
+
+    function getModalVisible() {
+      return modalVisible;
+    }
+    search.getModalVisible = getModalVisible;
+
+    function handleModalChange(visible) {
+      modalVisible = visible;
+      if (visible) {
+        search.onShow && search.onShow();
+        useDefaultSearchBox && $searchInput[0] && $searchInput[0].focus();
+      } else {
+        search.onShow && search.onHide();
+        useDefaultSearchBox && $searchInput[0] && $searchInput[0].blur();
+        setTimeout(function() {
+          useDefaultSearchBox && ($searchInput.val(''), $searchBox.removeClass('not-empty'));
+          search.clear && search.clear();
+          window.pageAsideAffix && window.pageAsideAffix.refresh();
+        }, 400);
+      }
+    }
+
+    $searchToggle.on('click', function() {
+      modalVisible ? searchModal.hide() : searchModal.show();
+    });
+    // Char Code: 83  S, 191 /
+    $(window).on('keyup', function(e) {
+      if (!modalVisible && !window.isFormElement(e.target || e.srcElement) && (e.which === 83 || e.which === 191)) {
+        modalVisible || searchModal.show();
+      }
+    });
+
+    if (useDefaultSearchBox) {
+      $searchBox = $('.js-search-box');
+      $searchInput = $searchBox.children('input');
+      $searchClear = $searchBox.children('.js-icon-clear');
+      search.getSearchInput = function() {
+        return $searchInput.get(0);
+      };
+      search.getVal = function() {
+        return $searchInput.val();
+      };
+      search.setVal = function(val) {
+        $searchInput.val(val);
+      };
+
+      $searchInput.on('focus', function() {
+        $(this).addClass('focus');
+      });
+      $searchInput.on('blur', function() {
+        $(this).removeClass('focus');
+      });
+      $searchInput.on('input', window.throttle(function() {
+        var val = $(this).val();
+        if (val === '' || typeof val !== 'string') {
+          search.clear && search.clear();
+        } else {
+          $searchBox.addClass('not-empty');
+          search.onInputNotEmpty && search.onInputNotEmpty(val);
+        }
+      }, 400));
+      $searchClear.on('click', function() {
+        $searchInput.val(''); $searchBox.removeClass('not-empty');
+        search.clear && search.clear();
+      });
+    }
+  });
+})();
+</script><div class="search search--dark search--google-custom-search-engine">
+    <div class="main">
+      <div class="content js-gcse">
+        <!-- <gcse:search enableAutoComplete="true" gname="search-box"></gcse:search>
+        <gcse:searchresults-only gname="results"></gcse:searchresults-only> -->
+      <div id="___gcse_0"><div class="gsc-control-cse gsc-control-cse-en"><div class="gsc-control-wrapper-cse" dir="ltr"><form class="gsc-search-box gsc-search-box-tools" accept-charset="utf-8"><table cellspacing="0" cellpadding="0" class="gsc-search-box"><tbody><tr><td class="gsc-input"><div class="gsc-input-box" id="gsc-iw-id1"><table cellspacing="0" cellpadding="0" id="gs_id50" class="gstl_50 gsc-input" style="width: 100%; padding: 0px;"><tbody><tr><td id="gs_tti50" class="gsib_a"><input autocomplete="off" type="text" size="10" class="gsc-input" name="search" title="search" id="gsc-i-id1" dir="ltr" spellcheck="false" style="width: 100%; padding: 0px; border: none; margin: -0.0625em 0px 0px; height: 1.25em; background: url(&quot;https://www.google.com/cse/static/images/1x/en/branding.png&quot;) left center no-repeat rgb(255, 255, 255); outline: none;"></td><td class="gsib_b"><div class="gsst_b" id="gs_st50" dir="ltr"><a class="gsst_a" href="javascript:void(0)" title="Clear search box" role="button" style="display: none;"><span class="gscb_a" id="gs_cb50" aria-hidden="true">×</span></a></div></td></tr></tbody></table></div></td><td class="gsc-search-button"><button class="gsc-search-button gsc-search-button-v2"><svg width="13" height="13" viewBox="0 0 13 13"><title>search</title><path d="m4.8495 7.8226c0.82666 0 1.5262-0.29146 2.0985-0.87438 0.57232-0.58292 0.86378-1.2877 0.87438-2.1144 0.010599-0.82666-0.28086-1.5262-0.87438-2.0985-0.59352-0.57232-1.293-0.86378-2.0985-0.87438-0.8055-0.010599-1.5103 0.28086-2.1144 0.87438-0.60414 0.59352-0.8956 1.293-0.87438 2.0985 0.021197 0.8055 0.31266 1.5103 0.87438 2.1144 0.56172 0.60414 1.2665 0.8956 2.1144 0.87438zm4.4695 0.2115 3.681 3.6819-1.259 1.284-3.6817-3.7 0.0019784-0.69479-0.090043-0.098846c-0.87973 0.76087-1.92 1.1413-3.1207 1.1413-1.3553 0-2.5025-0.46363-3.4417-1.3909s-1.4088-2.0686-1.4088-3.4239c0-1.3553 0.4696-2.4966 1.4088-3.4239 0.9392-0.92727 2.0864-1.3969 3.4417-1.4088 1.3553-0.011889 2.4906 0.45771 3.406 1.4088 0.9154 0.95107 1.379 2.0924 1.3909 3.4239 0 1.2126-0.38043 2.2588-1.1413 3.1385l0.098834 0.090049z"></path></svg></button></td><td class="gsc-clear-button"><div class="gsc-clear-button" title="clear results">&nbsp;</div></td></tr></tbody></table></form><div class="gsc-results-wrapper-nooverlay"><div class="gsc-positioningWrapper"><div class="gsc-tabsAreaInvisible"><div aria-label="refinement" role="tab" class="gsc-tabHeader gsc-inline-block gsc-tabhActive">Custom Search</div><span class="gs-spacer"> </span></div></div><div class="gsc-positioningWrapper"><div class="gsc-tabsAreaInvisible"></div></div><div class="gsc-above-wrapper-area-invisible"><table cellspacing="0" cellpadding="0" class="gsc-above-wrapper-area-container"><tbody><tr><td class="gsc-result-info-container"><div class="gsc-result-info-invisible"></div></td></tr></tbody></table></div><div class="gsc-adBlockInvisible"></div><div class="gsc-wrapper"><div class="gsc-adBlockInvisible"></div><div class="gsc-resultsbox-invisible"><div class="gsc-resultsRoot gsc-tabData gsc-tabdActive"><div><div class="gsc-expansionArea"></div></div></div></div></div></div></div></div></div><div id="___gcse_1"><div class="gsc-control-cse gsc-control-cse-en"><div class="gsc-control-wrapper-cse" dir="ltr" style="visibility: hidden;"><form class="gsc-search-box gsc-search-box-tools" accept-charset="utf-8" style="display: none;"><table cellspacing="0" cellpadding="0" class="gsc-search-box"><tbody><tr><td class="gsc-input"><div class="gsc-input-box" id="gsc-iw-id2"><table cellspacing="0" cellpadding="0" id="gs_id51" class="gstl_51 gsc-input" style="width: 100%; padding: 0px;"><tbody><tr><td id="gs_tti51" class="gsib_a"><input autocomplete="off" type="text" size="10" class="gsc-input" name="search" title="search" id="gsc-i-id2" dir="ltr" spellcheck="false" style="width: 100%; padding: 0px; border: none; margin: -0.0625em 0px 0px; height: 1.25em; background: url(&quot;https://www.google.com/cse/static/images/1x/en/branding.png&quot;) left center no-repeat rgb(255, 255, 255); outline: none;"></td><td class="gsib_b"><div class="gsst_b" id="gs_st51" dir="ltr"><a class="gsst_a" href="javascript:void(0)" title="Clear search box" role="button" style="display: none;"><span class="gscb_a" id="gs_cb51" aria-hidden="true">×</span></a></div></td></tr></tbody></table></div></td><td class="gsc-search-button"><button class="gsc-search-button gsc-search-button-v2"><svg width="13" height="13" viewBox="0 0 13 13"><title>search</title><path d="m4.8495 7.8226c0.82666 0 1.5262-0.29146 2.0985-0.87438 0.57232-0.58292 0.86378-1.2877 0.87438-2.1144 0.010599-0.82666-0.28086-1.5262-0.87438-2.0985-0.59352-0.57232-1.293-0.86378-2.0985-0.87438-0.8055-0.010599-1.5103 0.28086-2.1144 0.87438-0.60414 0.59352-0.8956 1.293-0.87438 2.0985 0.021197 0.8055 0.31266 1.5103 0.87438 2.1144 0.56172 0.60414 1.2665 0.8956 2.1144 0.87438zm4.4695 0.2115 3.681 3.6819-1.259 1.284-3.6817-3.7 0.0019784-0.69479-0.090043-0.098846c-0.87973 0.76087-1.92 1.1413-3.1207 1.1413-1.3553 0-2.5025-0.46363-3.4417-1.3909s-1.4088-2.0686-1.4088-3.4239c0-1.3553 0.4696-2.4966 1.4088-3.4239 0.9392-0.92727 2.0864-1.3969 3.4417-1.4088 1.3553-0.011889 2.4906 0.45771 3.406 1.4088 0.9154 0.95107 1.379 2.0924 1.3909 3.4239 0 1.2126-0.38043 2.2588-1.1413 3.1385l0.098834 0.090049z"></path></svg></button></td><td class="gsc-clear-button"><div class="gsc-clear-button" title="clear results">&nbsp;</div></td></tr></tbody></table></form><div class="gsc-results-wrapper-nooverlay"><div class="gsc-positioningWrapper"><div class="gsc-tabsAreaInvisible"><div aria-label="refinement" role="tab" class="gsc-tabHeader gsc-inline-block gsc-tabhActive">Custom Search</div><span class="gs-spacer"> </span></div></div><div class="gsc-positioningWrapper"><div class="gsc-tabsAreaInvisible"></div></div><div class="gsc-above-wrapper-area-invisible"><table cellspacing="0" cellpadding="0" class="gsc-above-wrapper-area-container"><tbody><tr><td class="gsc-result-info-container"><div class="gsc-result-info-invisible"></div></td></tr></tbody></table></div><div class="gsc-adBlockInvisible"></div><div class="gsc-wrapper"><div class="gsc-adBlockInvisible"></div><div class="gsc-resultsbox-invisible"><div class="gsc-resultsRoot gsc-tabData gsc-tabdActive"><div><div class="gsc-expansionArea"></div></div></div></div></div></div></div></div></div></div>
+    </div>
+  </div>
+  <script>
+    var gcse = document.getElementsByClassName('js-gcse')[0];
+    var gcseSearch = document.createElement('gcse:search');
+    gcseSearch.setAttribute('enableAutoComplete', 'true');
+    gcseSearch.setAttribute('gname', 'search-box');
+    var gcseSearchresults = document.createElement('gcse:searchresults-only');
+    gcseSearchresults.setAttribute('gname', 'results');
+    gcse.appendChild(gcseSearch);
+    gcse.appendChild(gcseSearchresults);
+  </script>
+  <script>var SOURCES = window.TEXT_VARIABLES.sources;
+window.Lazyload.js(SOURCES.jquery, function() {
+  /* global google */
+  var search = (window.search || (window.search = {}));
+  var searchBox, searchInput, clearIcon, searchModal;
+
+  search.clear = function() {
+    searchBox && searchBox.clearAllResults();
+  };
+  search.onShow = function() {
+    searchInput && searchInput.focus();
+  };
+  search.onHide = function() {
+    searchInput && searchInput.blur();
+  };
+
+  window.__gcse = {
+    callback: function() {
+      searchBox = google.search.cse.element.getElement('search-box');
+      searchInput = document.getElementById('gsc-i-id1');
+      clearIcon = document.getElementById('gs_cb50');
+      searchModal = search.searchModal;
+      searchModal && searchModal.$el && searchModal.$el.on('click', function(e) {
+        (e.target === this || e.target === clearIcon || e.target.className === 'gs-title') && searchModal.hide();
+      });
+    }
+  };
+  var cx = '009764199895742571316:nuhckqry2_e'; // Insert your own Custom Search Engine ID here
+  var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
+  gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+    '//cse.google.com/cse.js?cx=' + cx;
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
+});
+</script></div></div>
+
+
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function scrollToAnchor(anchor, duration, callback) {
+      var $root = this;
+      $root.animate({ scrollTop: $(anchor).position().top }, duration, function() {
+        window.history.replaceState(null, '', window.location.href.split('#')[0] + anchor);
+        callback && callback();
+      });
+    }
+    $.fn.scrollToAnchor = scrollToAnchor;
+  });
+})();(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function affix(options) {
+      var $root = this, $window = $(window), $scrollTarget, $scroll,
+        offsetBottom = 0, scrollTarget = window, scroll = window.document, disabled = false, isOverallScroller = true,
+        rootTop, rootLeft, rootHeight, scrollBottom, rootBottomTop,
+        hasInit = false, curState;
+
+      function setOptions(options) {
+        var _options = options || {};
+        _options.offsetBottom && (offsetBottom = _options.offsetBottom);
+        _options.scrollTarget && (scrollTarget = _options.scrollTarget);
+        _options.scroll && (scroll = _options.scroll);
+        _options.disabled !== undefined && (disabled = _options.disabled);
+        $scrollTarget = $(scrollTarget);
+        isOverallScroller = window.isOverallScroller($scrollTarget[0]);
+        $scroll = $(scroll);
+      }
+      function preCalc() {
+        top();
+        rootHeight = $root.outerHeight();
+        rootTop = $root.offset().top + (isOverallScroller ? 0 :  $scrollTarget.scrollTop());
+        rootLeft = $root.offset().left;
+      }
+      function calc(needPreCalc) {
+        needPreCalc && preCalc();
+        scrollBottom = $scroll.outerHeight() - offsetBottom - rootHeight;
+        rootBottomTop = scrollBottom - rootTop;
+      }
+      function top() {
+        if (curState !== 'top') {
+          $root.removeClass('fixed').css({
+            left: 0,
+            top: 0
+          });
+          curState = 'top';
+        }
+      }
+      function fixed() {
+        if (curState !== 'fixed') {
+          $root.addClass('fixed').css({
+            left: rootLeft + 'px',
+            top: 0
+          });
+          curState = 'fixed';
+        }
+      }
+      function bottom() {
+        if (curState !== 'bottom') {
+          $root.removeClass('fixed').css({
+            left: 0,
+            top: rootBottomTop + 'px'
+          });
+          curState = 'bottom';
+        }
+      }
+      function setState() {
+        var scrollTop = $scrollTarget.scrollTop();
+        if (scrollTop >= rootTop && scrollTop <= scrollBottom) {
+          fixed();
+        } else if (scrollTop < rootTop) {
+          top();
+        } else {
+          bottom();
+        }
+      }
+      function init() {
+        if(!hasInit) {
+          var interval, timeout;
+          calc(true); setState();
+          // run calc every 100 millisecond
+          interval = setInterval(function() {
+            calc();
+          }, 100);
+          timeout = setTimeout(function() {
+            clearInterval(interval);
+          }, 45000);
+          window.pageLoad.then(function() {
+            setTimeout(function() {
+              clearInterval(interval);
+              clearTimeout(timeout);
+            }, 3000);
+          });
+          $scrollTarget.on('scroll', function() {
+            disabled || setState();
+          });
+          $window.on('resize', function() {
+            disabled || (calc(true), setState());
+          });
+          hasInit = true;
+        }
+      }
+
+      setOptions(options);
+      if (!disabled) {
+        init();
+      }
+      $window.on('resize', window.throttle(function() {
+        init();
+      }, 200));
+      return {
+        setOptions: setOptions,
+        refresh: function() {
+          calc(true, { animation: false }); setState();
+        }
+      };
+    }
+    $.fn.affix = affix;
+  });
+})();(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function toc(options) {
+      var $root = this, $window = $(window), $scrollTarget, $scroller, $tocUl = $('<ul class="toc toc--ellipsis"></ul>'), $tocLi, $headings, $activeLast, $activeCur,
+        selectors = 'h1,h2,h3', container = 'body', scrollTarget = window, scroller = 'html, body', disabled = false,
+        headingsPos, scrolling = false, hasRendered = false, hasInit = false;
+
+      function setOptions(options) {
+        var _options = options || {};
+        _options.selectors && (selectors = _options.selectors);
+        _options.container && (container = _options.container);
+        _options.scrollTarget && (scrollTarget = _options.scrollTarget);
+        _options.scroller && (scroller = _options.scroller);
+        _options.disabled !== undefined && (disabled = _options.disabled);
+        $headings = $(container).find(selectors).filter('[id]');
+        $scrollTarget = $(scrollTarget);
+        $scroller = $(scroller);
+      }
+      function calc() {
+        headingsPos = [];
+        $headings.each(function() {
+          headingsPos.push(Math.floor($(this).position().top));
+        });
+      }
+      function setState(element, disabled) {
+        var scrollTop = $scrollTarget.scrollTop(), i;
+        if (disabled || !headingsPos || headingsPos.length < 1) { return; }
+        if (element) {
+          $activeCur = element;
+        } else {
+          for (i = 0; i < headingsPos.length; i++) {
+            if (scrollTop >= headingsPos[i]) {
+              $activeCur = $tocLi.eq(i);
+            } else {
+              $activeCur || ($activeCur = $tocLi.eq(i));
+              break;
+            }
+          }
+        }
+        $activeLast && $activeLast.removeClass('active');
+        ($activeLast = $activeCur).addClass('active');
+      }
+      function render() {
+        if(!hasRendered) {
+          $root.append($tocUl);
+          $headings.each(function() {
+            var $this = $(this);
+            $tocUl.append($('<li></li>').addClass('toc-' + $this.prop('tagName').toLowerCase())
+              .append($('<a></a>').text($this.text()).attr('href', '#' + $this.prop('id'))));
+          });
+          $tocLi = $tocUl.children('li');
+          $tocUl.on('click', 'a', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            scrolling = true;
+            setState($this.parent());
+            $scroller.scrollToAnchor($this.attr('href'), 400, function() {
+              scrolling = false;
+            });
+          });
+        }
+        hasRendered = true;
+      }
+      function init() {
+        var interval, timeout;
+        if(!hasInit) {
+          render(); calc(); setState(null, scrolling);
+          // run calc every 100 millisecond
+          interval = setInterval(function() {
+            calc();
+          }, 100);
+          timeout = setTimeout(function() {
+            clearInterval(interval);
+          }, 45000);
+          window.pageLoad.then(function() {
+            setTimeout(function() {
+              clearInterval(interval);
+              clearTimeout(timeout);
+            }, 3000);
+          });
+          $scrollTarget.on('scroll', function() {
+            disabled || setState(null, scrolling);
+          });
+          $window.on('resize', window.throttle(function() {
+            if (!disabled) {
+              render(); calc(); setState(null, scrolling);
+            }
+          }, 100));
+        }
+        hasInit = true;
+      }
+
+      setOptions(options);
+      if (!disabled) {
+        init();
+      }
+      $window.on('resize', window.throttle(function() {
+        init();
+      }, 200));
+      return {
+        setOptions: setOptions
+      };
+    }
+    $.fn.toc = toc;
+  });
+})();/*(function () {
+
+})();*/</script><script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $pageMask = $('.js-page-mask');
+    var $pageRoot = $('.js-page-root');
+    var $pageMain = $('.js-page-main');
+    var $sidebarShow = $('.js-sidebar-show');
+    var $sidebarHide = $('.js-sidebar-hide');
+
+    function freeze(e) {
+      if (e.target === $pageMask[0]) {
+        e.preventDefault();
+      }
+    }
+    function stopBodyScrolling(bool) {
+      if (bool === true) {
+        window.addEventListener('touchmove', freeze, { passive: false });
+      } else {
+        window.removeEventListener('touchmove', freeze, { passive: false });
+      }
+    }
+
+    $sidebarShow.on('click', function() {
+      stopBodyScrolling(true); $pageRoot.addClass('show-sidebar');
+    });
+    $sidebarHide.on('click', function() {
+      stopBodyScrolling(false); $pageRoot.removeClass('show-sidebar');
+    });
+  });
+})();</script>
+    </div>
+    <script>(function () {
+  var $root = document.getElementsByClassName('root')[0];
+  if (window.hasEvent('touchstart')) {
+    $root.dataset.isTouch = true;
+    document.addEventListener('touchstart', function(){}, false);
+  }
+})();</script>
+  
+<table cellspacing="0" cellpadding="0" class="gstl_50 gssb_c" style="width: 160px; display: none; top: 78px; left: 293px; position: absolute;"><tbody><tr><td class="gssb_f"></td><td class="gssb_e" style="width: 100%;"></td></tr></tbody></table><table cellspacing="0" cellpadding="0" class="gstl_51 gssb_c" style="width: 160px; display: none; top: 170px; left: 293px; position: absolute;"><tbody><tr><td class="gssb_f"></td><td class="gssb_e" style="width: 100%;"></td></tr></tbody></table></body></html>

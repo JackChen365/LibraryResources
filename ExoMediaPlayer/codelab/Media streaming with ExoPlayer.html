@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<!-- saved from url=(0066)https://codelabs.developers.google.com/codelabs/exoplayer-intro/#0 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  
+  <title>Media streaming with ExoPlayer</title>
+  <link rel="stylesheet" href="./Media streaming with ExoPlayer_files/css">
+  <link rel="stylesheet" href="./Media streaming with ExoPlayer_files/icon">
+  <link rel="stylesheet" href="./Media streaming with ExoPlayer_files/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+<script src="./Media streaming with ExoPlayer_files/analytics.js"></script></head>
+<body data-gr-c-s-loaded="true">
+  <google-codelab-analytics gaid="UA-49880327-14" environment="web" category="null"></google-codelab-analytics>
+  <google-codelab codelab-gaid="" id="exoplayer-intro" environment="web" feedback-link="https://github.com/googlecodelabs/exoplayer-intro/issues" selected="0" google-codelab-ready="" codelab-title="Media streaming with ExoPlayer" anayltics-ready="anayltics-ready"><div id="drawer"><div class="codelab-time-container"><div class="time-remaining" title="Time remaining"><i class="material-icons">access_time</i>67 mins remaining</div></div><div class="steps"><ol><li completed="" selected=""><a href="https://codelabs.developers.google.com/codelabs/exoplayer-intro/#0"><span class="step"><span>Before you begin</span></span></a></li><li><a href="https://codelabs.developers.google.com/codelabs/exoplayer-intro/#1"><span class="step"><span>Get set up</span></span></a></li><li><a href="https://codelabs.developers.google.com/codelabs/exoplayer-intro/#2"><span class="step"><span>Stream!</span></span></a></li><li><a href="https://codelabs.developers.google.com/codelabs/exoplayer-intro/#3"><span class="step"><span>Create a playlist</span></span></a></li><li><a href="https://codelabs.developers.google.com/codelabs/exoplayer-intro/#4"><span class="step"><span>Adaptive streaming</span></span></a></li><li><a href="https://codelabs.developers.google.com/codelabs/exoplayer-intro/#5"><span class="step"><span>Listening for events</span></span></a></li><li><a href="https://codelabs.developers.google.com/codelabs/exoplayer-intro/#6"><span class="step"><span>Customize the user interface</span></span></a></li><li><a href="https://codelabs.developers.google.com/codelabs/exoplayer-intro/#7"><span class="step"><span>Congratulations</span></span></a></li></ol></div><div class="metadata"><a target="_blank" href="https://github.com/googlecodelabs/exoplayer-intro/issues"><i class="material-icons">bug_report</i> Report a mistake</a></div></div><div id="codelab-title"><div id="codelab-nav-buttons"><a href="https://codelabs.developers.google.com/" id="arrow-back"><i class="material-icons">close</i></a><a href="https://codelabs.developers.google.com/codelabs/exoplayer-intro/#" id="menu"><i class="material-icons">menu</i></a></div><h1 class="title">Media streaming with ExoPlayer</h1><div class="codelab-time-container"><div class="time-remaining" title="Time remaining"><i class="material-icons">access_time</i>67 mins remaining</div></div><devsite-user></devsite-user></div><div id="main"><div id="steps"><google-codelab-step label="Before you begin" duration="0" step="1" style="transform: translate3d(0px, 0px, 0px);" selected=""><div class="instructions"><div class="inner"><h2 is-upgraded="" class="step-title">1. Before you begin</h2>
+        <aside class="special"><p><strong>Note: </strong>ExoPlayer is the video player running in the Android YouTube app.</p>
+</aside>
+<p class="image-container"><img style="width: 311.52px" src="./Media streaming with ExoPlayer_files/4ec261ee5a0bd0cc.png"></p>
+<p>Screenshot: The YouTube Android app</p>
+<p><a href="https://exoplayer.dev/" target="_blank">ExoPlayer</a> is an app-level media player built on top of low-level media APIs in Android. ExoPlayer has a number of advantages over the built-in <a href="https://developer.android.com/reference/android/media/MediaPlayer" target="_blank">MediaPlayer</a> in Android. It <a href="https://exoplayer.dev/supported-formats.html" target="_blank">supports many of the same media formats</a> as <a href="https://developer.android.com/reference/android/media/MediaPlayer" target="_blank">MediaPlayer</a>, plus adaptive formats, such as DASH and SmoothStreaming. ExoPlayer is highly customizable and extensible, making it capable of many advanced use cases. It is an <a href="https://github.com/google/ExoPlayer" target="_blank">open source project</a> used by Google apps, including YouTube and Google Play Movies &amp; TV.</p>
+<aside class="special"><p><strong>Note: </strong>Read more about the <a href="https://exoplayer.dev/pros-and-cons.html" target="_blank">pros and cons</a> in the ExoPlayer developer guide.</p>
+</aside>
+<h2 is-upgraded="">Prerequisites</h2>
+<ul>
+<li>Moderate knowledge of Android development and Android Studio</li>
+</ul>
+<h2 is-upgraded="">What <strong>you'll do</strong></h2>
+<ul>
+<li>Create a <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/SimpleExoPlayer.html" target="_blank"><code>SimpleExoPlayer</code></a> instance, which prepares and plays media from a variety of sources.</li>
+<li>Integrate ExoPlayer with the app's activity lifecycle to support backgrounding, foregrounding, and playback resumption in single or multiwindow environment.</li>
+<li>Use <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/source/MediaSource.html" target="_blank"><code>MediaSource</code></a> composition to create a playlist.</li>
+<li>Play adaptive video streams, which adapt the media quality to the available bandwidth.</li>
+<li>Register event listeners to monitor playback state and show how listeners can be used to measure the quality of playback.</li>
+<li>Use standard ExoPlayer UI components, then customize them to your app's style. </li>
+</ul>
+<h2 is-upgraded="">What you'll need</h2>
+<ul>
+<li><a href="https://developer.android.com/studio/index.html" target="_blank">Android Studio</a> version 3.5 or higher</li>
+<li>An Android device with JellyBean (4.1) or higher, ideally with Nougat (7.1) or higher as it supports  multiple windows.</li>
+</ul>
+<aside class="special"><p><strong>Note: </strong>This codelab is focused on ExoPlayer. Non-relevant concepts and code blocks are glossed over and are provided for you to simply copy and paste.</p>
+</aside>
+
+
+      </div></div></google-codelab-step><google-codelab-step label="Get set up" duration="2" step="2" style="transform: translate3d(110%, 0px, 0px);"><div class="instructions"><div class="inner"><h2 is-upgraded="" class="step-title">2. Get set up</h2>
+        <h2 is-upgraded=""><strong>Get the code</strong></h2>
+<p>To get started, download the Android Studio project:</p>
+<p><a href="https://github.com/googlecodelabs/exoplayer-intro/archive/master.zip" target="_blank"><paper-button class="colored" raised=""><iron-icon icon="file-download"></iron-icon>Download zip</paper-button></a></p>
+<p>Alternatively, you can clone the GitHub repository:</p>
+<pre><code><span class="pln">git clone https</span><span class="pun">:</span><span class="com">//github.com/googlecodelabs/exoplayer-intro.git</span></code></pre>
+<h2 is-upgraded=""><strong>Directory structure</strong></h2>
+<p>Cloning or unzipping provides you with a root folder (<code>exoplayer-intro</code>), which contains one folder for each step of this codelab, along with all the resources you need:</p>
+<pre><code><span class="str">/PATH/</span><span class="pln">TO</span><span class="pun">/</span><span class="pln">YOUR</span><span class="pun">/</span><span class="pln">FOLDER</span><span class="pun">/</span><span class="pln">exoplayer</span><span class="pun">-</span><span class="pln">intro</span><span class="pun">/</span><span class="pln">exoplayer</span><span class="pun">-</span><span class="pln">codelab</span><span class="pun">-</span><span class="lit">00</span><span class="pln">
+</span><span class="pun">/</span><span class="pln">PATH</span><span class="pun">/</span><span class="pln">TO</span><span class="pun">/</span><span class="pln">YOUR</span><span class="pun">/</span><span class="pln">FOLDER</span><span class="pun">/</span><span class="pln">exoplayer</span><span class="pun">-</span><span class="pln">intro</span><span class="pun">/</span><span class="pln">exoplayer</span><span class="pun">-</span><span class="pln">codelab</span><span class="pun">-</span><span class="lit">01</span><span class="pln">
+</span><span class="pun">/</span><span class="pln">PATH</span><span class="pun">/</span><span class="pln">TO</span><span class="pun">/</span><span class="pln">YOUR</span><span class="pun">/</span><span class="pln">FOLDER</span><span class="pun">/</span><span class="pln">exoplayer</span><span class="pun">-</span><span class="pln">intro</span><span class="pun">/</span><span class="pln">exoplayer</span><span class="pun">-</span><span class="pln">codelab</span><span class="pun">-</span><span class="lit">02</span><span class="pln">
+</span><span class="pun">/</span><span class="pln">PATH</span><span class="pun">/</span><span class="pln">TO</span><span class="pun">/</span><span class="pln">YOUR</span><span class="pun">/</span><span class="pln">FOLDER</span><span class="pun">/</span><span class="pln">exoplayer</span><span class="pun">-</span><span class="pln">intro</span><span class="pun">/</span><span class="pln">exoplayer</span><span class="pun">-</span><span class="pln">codelab</span><span class="pun">-</span><span class="lit">03</span><span class="pln">
+</span><span class="pun">/</span><span class="pln">PATH</span><span class="pun">/</span><span class="pln">TO</span><span class="pun">/</span><span class="pln">YOUR</span><span class="pun">/</span><span class="pln">FOLDER</span><span class="pun">/</span><span class="pln">exoplayer</span><span class="pun">-</span><span class="pln">intro</span><span class="pun">/</span><span class="pln">exoplayer</span><span class="pun">-</span><span class="pln">codelab</span><span class="pun">-</span><span class="lit">04</span></code></pre>
+<p>The <code>exoplayer-codelab-N</code> folders (where <code>N</code> is <code>00</code> to <code>04</code>) contain the desired end state of each step of this codelab. These are standalone Android Studio projects, which can each be imported. </p>
+<h2 is-upgraded=""><strong>Import the </strong>initial<strong> project</strong></h2>
+<ol type="1" start="1">
+<li>Start Android Studio. </li>
+<li>Choose <strong>File</strong> &gt; <strong>New</strong> &gt; <strong>Import Project</strong><em>. </em></li>
+<li>Import the initial project from <code>exoplayer-codelab-00</code>. </li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="./Media streaming with ExoPlayer_files/f2e5feb9ade6c7f7.png"></p>
+<p>Screenshot: Project structure when importing</p>
+<p>After the build finishes, you see two modules: the <code>app</code> module (of type <em>application</em>) and the <code>player-lib</code> module (of type <em>library</em>). The <code>app</code> module is actually empty, having only a manifest. Everything from the <code>player-lib</code> module is merged when the app is built using a gradle dependency in <code>app/build.gradle</code>. </p>
+<h3 is-upgraded=""><strong>app/build.gradle</strong></h3>
+<pre><code><span class="pln">dependencies </span><span class="pun">{</span><span class="pln">
+   implementation project</span><span class="pun">(</span><span class="str">":player-lib"</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p>Your media player Activity is kept in the <code>player-lib</code> module. The reason for keeping it in a separate library module is so you can share it among APKs targeting different platforms, such as mobile and Android TV. It also allows you to take advantage of features, such as <a href="https://developer.android.com/studio/projects/dynamic-delivery" target="_blank">Dynamic Delivery</a>, which allow your media playback feature to be installed only when the user needs it. </p>
+<ol type="1" start="4">
+<li>Deploy and run the app to check everything is fine. The app should fill the screen with a black background. </li>
+</ol>
+<p class="image-container"><img style="width: 336.89px" src="./Media streaming with ExoPlayer_files/21c0dae6245fbd31.png"></p>
+<p>Screenshot: Blank app running</p>
+
+
+      </div></div></google-codelab-step><google-codelab-step label="Stream!" duration="15" step="3"><div class="instructions"><div class="inner"><h2 is-upgraded="" class="step-title">3. Stream!</h2>
+        <h2 is-upgraded="">Add ExoPlayer dependency</h2>
+<p>ExoPlayer is an <a href="https://github.com/google/ExoPlayer" target="_blank">open source project hosted on GitHub</a>. Each release is <a href="https://bintray.com/google/exoplayer/exoplayer" target="_blank">distributed through jCenter</a>, which is one of the default package repositories used by Android Studio and Gradle. Each release is uniquely identified by a string with the following format:</p>
+<pre><code><span class="pln">com</span><span class="pun">.</span><span class="pln">google</span><span class="pun">.</span><span class="pln">android</span><span class="pun">.</span><span class="pln">exoplayer</span><span class="pun">:</span><span class="pln">exoplayer</span><span class="pun">:</span><span class="pln">rX</span><span class="pun">.</span><span class="pln">X</span><span class="pun">.</span><span class="pln">X</span></code></pre>
+<p>You can add ExoPlayer to your project simply by importing its classes and UI components. It's pretty small, having a <a href="https://exoplayer.dev/shrinking.html" target="_blank">shrunken footprint</a> of about 70-to-300 kB depending on the included features and supported formats. The ExoPlayer library is split in to modules to allow developers to import only the functionality they need. For more information about ExoPlayer's modular structure, see <a href="https://exoplayer.dev/hello-world.html#add-exoplayer-modules" target="_blank">Add ExoPlayer modules.</a></p>
+<ol type="1" start="1">
+<li>Open the <code>build.gradle</code> file of the <code>player-lib</code> module.</li>
+<li>Add the following lines to the <code>dependencies</code> section and sync the project. </li>
+</ol>
+<h3 is-upgraded=""><strong>player-lib/build.gradle</strong></h3>
+<pre><code><span class="pln">dependencies </span><span class="pun">{</span><span class="pln">
+   </span><span class="pun">[...]</span><span class="pln">
+   
+implementation </span><span class="str">'com.google.android.exoplayer:exoplayer-core:2.11.5'</span><span class="pln">
+implementation </span><span class="str">'com.google.android.exoplayer:exoplayer-dash:2.11.5'</span><span class="pln">
+implementation </span><span class="str">'com.google.android.exoplayer:exoplayer-ui:2.11.5'</span><span class="pln">
+
+</span><span class="pun">}</span></code></pre>
+<h2 is-upgraded="">Add the <code>PlayerView element</code></h2>
+<ol type="1" start="1">
+<li>Open the layout resource file <code>activity_player.xml</code> from the <code>player-lib</code> module. </li>
+<li>Place the cursor inside the <code>FrameLayout</code> element.</li>
+<li>Start typing <code>&lt;PlayerView</code> and let Android Studio autocomplete the <code>PlayerView</code> element. </li>
+<li>Use <code>match_parent</code> for the <code>width</code> and <code>height</code>.</li>
+<li>Declare the id as <code>video_view</code>.</li>
+</ol>
+<h3 is-upgraded=""><strong>activity_player.xml</strong></h3>
+<pre><code><span class="tag">&lt;com.google.android.exoplayer2.ui.PlayerView</span><span class="pln">
+   </span><span class="atn">android:id</span><span class="pun">=</span><span class="atv">"@+id/video_view"</span><span class="pln">
+   </span><span class="atn">android:layout_width</span><span class="pun">=</span><span class="atv">"match_parent"</span><span class="pln">
+   </span><span class="atn">android:layout_height</span><span class="pun">=</span><span class="atv">"match_parent"</span><span class="tag">/&gt;</span></code></pre>
+<p>Going forward, you refer to this UI element as the video view.</p>
+<ol type="1" start="6">
+<li>In the <code>PlayerActivity</code>, you now need to find the video view so you can properly set it up in the <code>onCreate</code> method of the activity.</li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="lit">@Override</span><span class="pln">
+</span><span class="kwd">protected</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> onCreate</span><span class="pun">(</span><span class="typ">Bundle</span><span class="pln"> savedInstanceState</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="pun">[...]</span><span class="pln">
+   playerView </span><span class="pun">=</span><span class="pln"> findViewById</span><span class="pun">(</span><span class="pln">R</span><span class="pun">.</span><span class="pln">id</span><span class="pun">.</span><span class="pln">video_view</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<ol type="1" start="7">
+<li>Add the <code>playerView</code> member field to your <code>PlayerActivity</code> class. Make sure the type of view is <code>PlayerView</code>.</li>
+</ol>
+<p><strong>Note:</strong> Use the Quick Fix feature in Android Studio to add a member field automatically. Remember to set the type to </p>
+<pre><code><span class="typ">PlayerView</span></code></pre>
+<p> rather than the default </p>
+<pre><code><span class="typ">View</span></code></pre>
+<p>. </p>
+<p class="image-container"><img style="width: 624.00px" src="./Media streaming with ExoPlayer_files/b0f7f70115bb90e5.png"></p>
+<p>Screenshot: Quick fix menu for making a member field</p>
+<h2 is-upgraded=""><strong>Create an ExoPlayer</strong></h2>
+<p>To play streaming media, you need an <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/ExoPlayer.html" target="_blank"><code>ExoPlayer</code></a> object. The simplest way of creating one is to use the <code>SimpleExoPlayer.Builder</code> class. As the name suggests, this uses the b<a href="https://en.wikipedia.org/wiki/Builder_pattern" target="_blank">uilder pattern</a> to build a <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/SimpleExoPlayer.html" target="_blank"><code>SimpleExoPlayer</code></a> instance.</p>
+<p><code>SimpleExoPlayer</code> is a convenient, all-purpose implementation of the <code>ExoPlayer</code> interface. </p>
+<p>Add a private method <code>initializePlayer</code> to create your <code>SimpleExoPlayer</code>.</p>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="kwd">private</span><span class="pln"> </span><span class="typ">SimpleExoPlayer</span><span class="pln"> player</span><span class="pun">;</span><span class="pln">
+</span><span class="pun">[...]</span><span class="pln">
+</span><span class="kwd">private</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> initializePlayer</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+     player </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">SimpleExoPlayer</span><span class="pun">.</span><span class="typ">Builder</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">).</span><span class="pln">build</span><span class="pun">();</span><span class="pln">
+     playerView</span><span class="pun">.</span><span class="pln">setPlayer</span><span class="pun">(</span><span class="pln">player</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p>Create a <code>SimpleExoPlayer.Builder</code> using your context, then call <code>build</code> to create your <code>SimpleExoPlayer</code> object. This is then assigned to <code>player</code>, which you need to declare as a member field. You then use <code>playerView.setPlayer</code> to bind the <code>player</code> to its corresponding view. </p>
+<h2 is-upgraded=""><strong>Create a media source </strong></h2>
+<p>Your <code>player</code> now needs some content to play. For this, you need to create a <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/source/MediaSource.html" target="_blank"><code>MediaSource</code></a>. There are many different types of <code>MediaSource</code>, but you start by creating a <code>ProgressiveMediaSource</code> for an MP3 file on the internet. </p>
+<aside class="special"><p><strong>Note: </strong>A progressive media source is one which is obtained through <a href="https://en.wikipedia.org/wiki/Progressive_download" target="_blank">progressive download</a>. </p>
+</aside>
+<ol type="1" start="1">
+<li>Create a new private method named <code>buildMediaSource</code>.</li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="kwd">private</span><span class="pln"> </span><span class="typ">MediaSource</span><span class="pln"> buildMediaSource</span><span class="pun">(</span><span class="typ">Uri</span><span class="pln"> uri</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="typ">DataSource</span><span class="pun">.</span><span class="typ">Factory</span><span class="pln"> dataSourceFactory </span><span class="pun">=</span><span class="pln">
+       </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">DefaultDataSourceFactory</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">,</span><span class="pln"> </span><span class="str">"exoplayer-codelab"</span><span class="pun">);</span><span class="pln">
+  </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">ProgressiveMediaSource</span><span class="pun">.</span><span class="typ">Factory</span><span class="pun">(</span><span class="pln">dataSourceFactory</span><span class="pun">)</span><span class="pln">
+       </span><span class="pun">.</span><span class="pln">createMediaSource</span><span class="pun">(</span><span class="pln">uri</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p>This method takes a <code>Uri</code> as its parameter, containing the URI of a media file. The body of the method does quite a few things. </p>
+<p>First, you create a <code>DefaultDataSourceFactory</code>, specifying your context and the <a href="https://developer.chrome.com/multidevice/user-agent" target="_blank">user-agent string</a>, which is used when making the HTTP request for the media file. </p>
+<p>Next, you pass your newly created <code>dataSourceFactory</code> to <code>ProgressiveMediaSource.Factory</code>. This is, as the name suggests, a factory for creating <a href="https://exoplayer.dev/progressive.html" target="_blank">progressive media data sources</a>. </p>
+<aside class="special"><p><strong>Note: </strong>Multimedia data is usually stored using a container format, such as <a href="https://en.wikipedia.org/wiki/MPEG-4_Part_14" target="_blank">MP4</a> or <a href="https://en.wikipedia.org/wiki/Ogg" target="_blank">Ogg</a>. Before the video and/or audio data can be played, it must be extracted from the container. ExoPlayer is capable of extracting data from many different container formats using a variety of <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/extractor/Extractor.html" target="_blank"><code>Extractor</code></a> classes. </p>
+</aside>
+<p>By default the <code>ProgressiveMediaSource.Factory</code> uses a <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/extractor/DefaultExtractorsFactory" target="_blank"><code>DefaultExtractorsFactory</code></a>.</p>
+<p>Finally, you call <code>createMediaSource</code>, supplying your <code>uri</code>, to obtain a <code>MediaSource</code> object. </p>
+<ol type="1" start="2">
+<li>Use your new method inside <code>initializePlayer</code> by adding the following code: </li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="kwd">private</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> initializePlayer</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+     </span><span class="pun">[...]</span><span class="pln">
+     </span><span class="typ">Uri</span><span class="pln"> uri </span><span class="pun">=</span><span class="pln"> </span><span class="typ">Uri</span><span class="pun">.</span><span class="pln">parse</span><span class="pun">(</span><span class="pln">getString</span><span class="pun">(</span><span class="pln">R</span><span class="pun">.</span><span class="kwd">string</span><span class="pun">.</span><span class="pln">media_url_mp3</span><span class="pun">));</span><span class="pln">
+     </span><span class="typ">MediaSource</span><span class="pln"> mediaSource </span><span class="pun">=</span><span class="pln"> buildMediaSource</span><span class="pun">(</span><span class="pln">uri</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p>Note that <code>R.string.media_url_mp3</code> is defined as <a href="https://storage.googleapis.com/exoplayer-test-media-0/play.mp3" target="_blank">https://storage.googleapis.com/exoplayer-test-media-0/play.mp3</a> in <code>strings.xml</code>.</p>
+<h2 is-upgraded=""><strong>Playing nice with the Activity lifecycle</strong></h2>
+<p>Our <code>player</code> can hog a lot of resources including memory, CPU, network connections and hardware codecs. Many of these resources are in short supply, particularly for hardware codecs where there may only be one. It's important that you release those resources for other apps to use when you're not using them, such as when your app is put into the background. </p>
+<p>Put another way, your player's lifecycle should be tied to the <a href="https://developer.android.com/guide/components/activities/activity-lifecycle.html" target="_blank">lifecycle of your app</a>. To implement this, you need to override the four methods of <code>PlayerActivity</code>: <code>onStart</code>, <code>onResume</code>, <code>onPause</code>, and <code>onStop</code>.</p>
+<ol type="1" start="1">
+<li>With <code>PlayerActivity</code> open, click <strong>Code menu</strong> &gt; <strong>Override methods...</strong>.</li>
+<li>Select <code>onStart</code>, <code>onResume</code>, <code>onPause</code>, and <code>onStop</code>.</li>
+<li>Initialize the player in the <code>onStart</code> or <code>onResume</code> callback depending on the API level.</li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="lit">@Override</span><span class="pln">
+</span><span class="kwd">public</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> onStart</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+ </span><span class="kwd">super</span><span class="pun">.</span><span class="pln">onStart</span><span class="pun">();</span><span class="pln">
+ </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="typ">Util</span><span class="pun">.</span><span class="pln">SDK_INT </span><span class="pun">&gt;=</span><span class="pln"> </span><span class="lit">24</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+   initializePlayer</span><span class="pun">();</span><span class="pln">
+ </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+</span><span class="lit">@Override</span><span class="pln">
+</span><span class="kwd">public</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> onResume</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+ </span><span class="kwd">super</span><span class="pun">.</span><span class="pln">onResume</span><span class="pun">();</span><span class="pln">
+ hideSystemUi</span><span class="pun">();</span><span class="pln">
+ </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">((</span><span class="typ">Util</span><span class="pun">.</span><span class="pln">SDK_INT </span><span class="pun">&lt;</span><span class="pln"> </span><span class="lit">24</span><span class="pln"> </span><span class="pun">||</span><span class="pln"> player </span><span class="pun">==</span><span class="pln"> </span><span class="kwd">null</span><span class="pun">))</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+   initializePlayer</span><span class="pun">();</span><span class="pln">
+ </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p>Android API level 24 and higher supports <a href="https://developer.android.com/guide/topics/ui/multi-window" target="_blank">multiple windows</a>. As your app can be visible, but not active in split window mode, you need to initialize the player in <code>onStart</code>. Android API level 24 and lower requires you to wait as long as possible until you grab resources, so you wait until <code>onResume</code> before initializing the player. </p>
+<ol type="1" start="4">
+<li>Add the <code>hideSystemUi</code> method.</li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="lit">@SuppressLint</span><span class="pun">(</span><span class="str">"InlinedApi"</span><span class="pun">)</span><span class="pln">
+</span><span class="kwd">private</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> hideSystemUi</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+ playerView</span><span class="pun">.</span><span class="pln">setSystemUiVisibility</span><span class="pun">(</span><span class="typ">View</span><span class="pun">.</span><span class="pln">SYSTEM_UI_FLAG_LOW_PROFILE
+     </span><span class="pun">|</span><span class="pln"> </span><span class="typ">View</span><span class="pun">.</span><span class="pln">SYSTEM_UI_FLAG_FULLSCREEN
+     </span><span class="pun">|</span><span class="pln"> </span><span class="typ">View</span><span class="pun">.</span><span class="pln">SYSTEM_UI_FLAG_LAYOUT_STABLE
+     </span><span class="pun">|</span><span class="pln"> </span><span class="typ">View</span><span class="pun">.</span><span class="pln">SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+     </span><span class="pun">|</span><span class="pln"> </span><span class="typ">View</span><span class="pun">.</span><span class="pln">SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+     </span><span class="pun">|</span><span class="pln"> </span><span class="typ">View</span><span class="pun">.</span><span class="pln">SYSTEM_UI_FLAG_HIDE_NAVIGATION</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p><code>hideSystemUi</code> is a helper method called in <code>onResume</code>, which allows you to have a full-screen experience.</p>
+<ol type="1" start="5">
+<li>Release resources with <code>releasePlayer</code> (which you create shortly) in <code>onPause</code> and <code>onStop</code>.</li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="lit">@Override</span><span class="pln">
+</span><span class="kwd">public</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> onPause</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+ </span><span class="kwd">super</span><span class="pun">.</span><span class="pln">onPause</span><span class="pun">();</span><span class="pln">
+ </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="typ">Util</span><span class="pun">.</span><span class="pln">SDK_INT </span><span class="pun">&lt;</span><span class="pln"> </span><span class="lit">24</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+   releasePlayer</span><span class="pun">();</span><span class="pln">
+ </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+</span><span class="lit">@Override</span><span class="pln">
+</span><span class="kwd">public</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> onStop</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+ </span><span class="kwd">super</span><span class="pun">.</span><span class="pln">onStop</span><span class="pun">();</span><span class="pln">
+ </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="typ">Util</span><span class="pun">.</span><span class="pln">SDK_INT </span><span class="pun">&gt;=</span><span class="pln"> </span><span class="lit">24</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+   releasePlayer</span><span class="pun">();</span><span class="pln">
+ </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p>With API Level 24 and lower, there is no guarantee of <code>onStop</code> being called, so you have to release the player as early as possible in <code>onPause</code>. With API Level 24 and higher (which brought multi- and split-window mode), <code>onStop</code> is guaranteed to be called. In the paused state, your activity is still visible, so you wait to release the player until <code>onStop</code>.</p>
+<p>You now need to create a <code>releasePlayer</code> method, which frees the player's resources and destroys it. </p>
+<ol type="1" start="6">
+<li>Add the following code to the activity:</li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="kwd">private</span><span class="pln"> </span><span class="kwd">boolean</span><span class="pln"> playWhenReady </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">;</span><span class="pln">
+</span><span class="kwd">private</span><span class="pln"> </span><span class="kwd">int</span><span class="pln"> currentWindow </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
+</span><span class="kwd">private</span><span class="pln"> </span><span class="kwd">long</span><span class="pln"> playbackPosition </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
+</span><span class="pun">[...]</span><span class="pln">
+
+</span><span class="kwd">private</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> releasePlayer</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">player </span><span class="pun">!=</span><span class="pln"> </span><span class="kwd">null</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    playWhenReady </span><span class="pun">=</span><span class="pln"> player</span><span class="pun">.</span><span class="pln">getPlayWhenReady</span><span class="pun">();</span><span class="pln">
+    playbackPosition </span><span class="pun">=</span><span class="pln"> player</span><span class="pun">.</span><span class="pln">getCurrentPosition</span><span class="pun">();</span><span class="pln">
+    currentWindow </span><span class="pun">=</span><span class="pln"> player</span><span class="pun">.</span><span class="pln">getCurrentWindowIndex</span><span class="pun">();</span><span class="pln">
+    player</span><span class="pun">.</span><span class="pln">release</span><span class="pun">();</span><span class="pln">
+    player </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">null</span><span class="pun">;</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p>Before you release and destroy the player, store the following information: </p>
+<ul>
+<li>Play/pause state using <code>getPlayWhenReady</code>.</li>
+<li>Current playback position using <code>getCurrentPosition</code>.</li>
+<li>Current window index using <code>getCurrentWindowIndex</code>. For more information about windows, see <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/Timeline.html" target="_blank">Timeline</a>. </li>
+</ul>
+<p>This allows you to resume playback from where the user left off. All you need to do is supply this state information when you initialize your player. </p>
+<h2 is-upgraded=""><strong>Final preparation</strong></h2>
+<p>All you need to do now is to supply the state information you saved in <code>releasePlayer</code> to your player during initialization. </p>
+<ol type="1" start="1">
+<li>Add the following to <code>initializePlayer</code>:</li>
+</ol>
+<h3 is-upgraded="">PlayerActivity.java</h3>
+<pre><code><span class="kwd">private</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> initializePlayer</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="pun">[...]</span><span class="pln">
+    player</span><span class="pun">.</span><span class="pln">setPlayWhenReady</span><span class="pun">(</span><span class="pln">playWhenReady</span><span class="pun">);</span><span class="pln">
+    player</span><span class="pun">.</span><span class="pln">seekTo</span><span class="pun">(</span><span class="pln">currentWindow</span><span class="pun">,</span><span class="pln"> playbackPosition</span><span class="pun">);</span><span class="pln">
+    player</span><span class="pun">.</span><span class="pln">prepare</span><span class="pun">(</span><span class="pln">mediaSource</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p>Here's what's happening:</p>
+<ul>
+<li><a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/Player.html#setPlayWhenReady-boolean-" target="_blank"><code>setPlayWhenReady</code></a> tells the player whether to start playing as soon as all resources for playback have been acquired. Because <code>playWhenReady</code> is initially <code>true</code>, playback starts automatically the first time the app is run. </li>
+<li><a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/Player.html#seekTo-int-long-" target="_blank"><code>seekTo</code></a> tells the player to seek to a certain position within a specific window. Both <code>currentWindow</code> and <code>playbackPosition</code> are initialized to zero so that playback starts from the very start the first time the app is run.  </li>
+<li><a href="https://exoplayer.dev/doc/reference/index.html?com/google/android/exoplayer2/extractor/DefaultExtractorsFactory.html" target="_blank"><code>prepare</code></a> tells the player to acquire all the resources for the given <code>mediaSource</code>, and additionally tells it not to reset the position or state because you already set these in the two previous lines.  </li>
+</ul>
+<h2 is-upgraded=""><strong>Play audio</strong></h2>
+<p>Finally, you are done! Start the app to play the MP3 file and see the embedded artwork.</p>
+<p class="image-container"><img style="width: 316.71px" src="./Media streaming with ExoPlayer_files/1d049aead0483777.png"></p>
+<p>Screenshot: The app playing a single track.</p>
+<h2 is-upgraded=""><strong>Test the activity lifecycle </strong></h2>
+<p>Test whether the app works in all the different states of the activity lifecycle.</p>
+<ol type="1" start="1">
+<li>Start another app and put your app in the foreground again. Does it resume at the correct position?</li>
+<li>Pause the app, and move it to the background and then the foreground again. Does it stick to a paused state when backgrounded in paused state?</li>
+<li>Rotate the app. How does it behave if you change the orientation from portrait to landscape and back?</li>
+</ol>
+<h2 is-upgraded=""><strong>Play video</strong></h2>
+<p>If you want to play video, it's as easy as modifying the uri to an MP4 file. </p>
+<ol type="1" start="1">
+<li>Change the uri in the <code>initializePlayer</code> to <code>R.string.media_url_mp4</code>.</li>
+<li>Start the app again and test the behaviour after being backgrounded with video playback as well.</li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="kwd">private</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> initializePlayer</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="pun">[...]</span><span class="pln">
+  </span><span class="typ">Uri</span><span class="pln"> uri </span><span class="pun">=</span><span class="pln"> </span><span class="typ">Uri</span><span class="pun">.</span><span class="pln">parse</span><span class="pun">(</span><span class="pln">getString</span><span class="pun">(</span><span class="pln">R</span><span class="pun">.</span><span class="kwd">string</span><span class="pun">.</span><span class="pln">media_url_mp4</span><span class="pun">));</span><span class="pln">
+  </span><span class="pun">[...]</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p>The <code>PlayerView</code> does it all. Instead of the artwork, the video is rendered full screen.</p>
+<p class="image-container"><img style="width: 327.28px" src="./Media streaming with ExoPlayer_files/4ebd0b0f98593691.png"></p>
+<p>Screenshot: The app playing video.</p>
+<p>You rock! You just created an app for full-screen media streaming on Android, complete with lifecycle management, saved state, and UI controls!</p>
+
+
+      </div></div></google-codelab-step><google-codelab-step label="Create a playlist" duration="5" step="4"><div class="instructions"><div class="inner"><h2 is-upgraded="" class="step-title">4. Create a playlist</h2>
+        <aside class="special"><p><strong>Note: </strong>You can continue updating your current project or return to a known working state by importing the project from <code>exoplayer-intro/exoplayer-codelab-01</code>.</p>
+</aside>
+<p>Your current app plays a single media file, but what if you want to play more than one media file, one after the other? For that, you need a playlist. </p>
+<p><a href="https://exoplayer.dev/playlists.html" target="_blank">Playlists</a> can be created using a <code>ConcatenatingMediaSource</code>. This class allows you to combine media sources and play them seamlessly. It takes care of buffering in the background so the user doesn't see a buffering spinner when changing sources.   </p>
+<h2 is-upgraded=""><strong>Using ConcatenatingMediaSource</strong></h2>
+<p>Concatenate two media sources—the video and audio file from the previous step. They play one after the other. </p>
+<ol type="1" start="1">
+<li>Copy this code and replace the old <code>buildMediaSource</code> method:</li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="kwd">private</span><span class="pln"> </span><span class="typ">MediaSource</span><span class="pln"> buildMediaSource</span><span class="pun">(</span><span class="typ">Uri</span><span class="pln"> uri</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+ </span><span class="com">// These factories are used to construct two media sources.</span><span class="pln">
+ </span><span class="typ">DataSource</span><span class="pun">.</span><span class="typ">Factory</span><span class="pln"> dataSourceFactory </span><span class="pun">=</span><span class="pln">
+         </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">DefaultDataSourceFactory</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">,</span><span class="pln"> </span><span class="str">"exoplayer-codelab"</span><span class="pun">);</span><span class="pln">
+ </span><span class="typ">ProgressiveMediaSource</span><span class="pun">.</span><span class="typ">Factory</span><span class="pln"> mediaSourceFactory </span><span class="pun">=</span><span class="pln">
+         </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">ProgressiveMediaSource</span><span class="pun">.</span><span class="typ">Factory</span><span class="pun">(</span><span class="pln">dataSourceFactory</span><span class="pun">);</span><span class="pln">
+
+ </span><span class="com">// Create a media source using the supplied URI.</span><span class="pln">
+ </span><span class="typ">MediaSource</span><span class="pln"> mediaSource1 </span><span class="pun">=</span><span class="pln"> mediaSourceFactory</span><span class="pun">.</span><span class="pln">createMediaSource</span><span class="pun">(</span><span class="pln">uri</span><span class="pun">);</span><span class="pln">
+
+ </span><span class="com">// Additionally, create a media source using an MP3.</span><span class="pln">
+ </span><span class="typ">Uri</span><span class="pln"> audioUri </span><span class="pun">=</span><span class="pln"> </span><span class="typ">Uri</span><span class="pun">.</span><span class="pln">parse</span><span class="pun">(</span><span class="pln">getString</span><span class="pun">(</span><span class="pln">R</span><span class="pun">.</span><span class="kwd">string</span><span class="pun">.</span><span class="pln">media_url_mp3</span><span class="pun">));</span><span class="pln">
+ </span><span class="typ">MediaSource</span><span class="pln"> mediaSource2 </span><span class="pun">=</span><span class="pln"> mediaSourceFactory</span><span class="pun">.</span><span class="pln">createMediaSource</span><span class="pun">(</span><span class="pln">audioUri</span><span class="pun">);</span><span class="pln">
+
+ </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">ConcatenatingMediaSource</span><span class="pun">(</span><span class="pln">mediaSource1</span><span class="pun">,</span><span class="pln"> mediaSource2</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p>Check how the player controls behave. You can use  <img style="width: 21.97px" src="./Media streaming with ExoPlayer_files/1f79fee4d082870f.png">and <img style="width: 20.87px" src="./Media streaming with ExoPlayer_files/39627002c03ce320.png"> to navigate the sequence of concatenated media sources.</p>
+<p class="image-container"><img style="width: 624.00px" src="./Media streaming with ExoPlayer_files/7b5c034dafabe1bd.png"></p>
+<p>Screenshot: Playback controls showing a next and previous button</p>
+<p>That's pretty handy! For more information, see <a href="https://exoplayer.dev/media-sources.html#mediasource-composition" target="_blank">MediaSource composition</a> and <a href="https://exoplayer.dev/playlists.html" target="_blank">Playlists</a>.</p>
+
+
+      </div></div></google-codelab-step><google-codelab-step label="Adaptive streaming" duration="15" step="5"><div class="instructions"><div class="inner"><h2 is-upgraded="" class="step-title">5. Adaptive streaming</h2>
+        <aside class="special"><p><strong>Note: </strong>You can continue updating your current project or return to a known working state by importing the project from <code>exoplayer-intro/exoplayer-codelab-02</code>.</p>
+</aside>
+<p><a href="https://en.wikipedia.org/wiki/Adaptive_bitrate_streaming" target="_blank">Adaptive streaming</a> is a technique for streaming media by varying the quality of the stream based on the available network bandwidth. This allows the user to experience the best-quality media that their bandwidth allows. </p>
+<p>Typically, the same media content is split into multiple tracks with different qualities (bit rates and resolutions). The player chooses a track based on the available network bandwidth.   </p>
+<p>Each track is split into chunks of a given duration, typically between 2 and 10 seconds. This allows the player to quickly switch between tracks as available bandwidth changes. The player is responsible for stitching these chunks together for seamless playback. </p>
+<h2 is-upgraded=""><strong>Adaptive track selection</strong></h2>
+<p>At the heart of adaptive streaming is selecting the most appropriate track for the current environment. Update your app to play an adaptive streaming source by using adaptive <a href="https://exoplayer.dev/track-selection.html" target="_blank">track selection</a>. </p>
+<ol type="1" start="1">
+<li>Update <code>initializePlayer</code> with the following code:</li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="kwd">private</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> initializePlayer</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+
+  </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">player </span><span class="pun">==</span><span class="pln"> </span><span class="kwd">null</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="typ">DefaultTrackSelector</span><span class="pln"> trackSelector </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">DefaultTrackSelector</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">);</span><span class="pln">
+    trackSelector</span><span class="pun">.</span><span class="pln">setParameters</span><span class="pun">(</span><span class="pln">
+       trackSelector</span><span class="pun">.</span><span class="pln">buildUponParameters</span><span class="pun">().</span><span class="pln">setMaxVideoSizeSd</span><span class="pun">());</span><span class="pln">
+    player </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">SimpleExoPlayer</span><span class="pun">.</span><span class="typ">Builder</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">)</span><span class="pln">
+        </span><span class="pun">.</span><span class="pln">setTrackSelector</span><span class="pun">(</span><span class="pln">trackSelector</span><span class="pun">)</span><span class="pln">
+        </span><span class="pun">.</span><span class="pln">build</span><span class="pun">();</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+  </span><span class="com">// Remove or comment out.</span><span class="pln">
+  </span><span class="com">// player = new SimpleExoPlayer.Builder(this).build();</span><span class="pln">
+  </span><span class="pun">[...]</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p>First, create a <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/trackselection/DefaultTrackSelector.html" target="_blank"><code>DefaultTrackSelector</code></a>, which is responsible for choosing tracks in the media source. Then, tell your <code>trackSelector</code> to only pick tracks of <a href="https://en.wikipedia.org/wiki/Standard-definition_television" target="_blank">standard definition</a> or lower—a good way of saving your user's data at the expense of quality. Lastly, pass your <code>trackSelector</code> to your builder so that it is used when building the <code>SimpleExoPlayer</code> instance.</p>
+<h2 is-upgraded=""><strong>Build an adaptive MediaSource</strong></h2>
+<p><a href="https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP" target="_blank">DASH</a> is a widely used adaptive streaming format. To stream DASH content, you need to create a <code>DashMediaSource</code>. </p>
+<ol type="1" start="1">
+<li>Update <code>buildMediaSource</code> as follows:</li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="kwd">private</span><span class="pln"> </span><span class="typ">MediaSource</span><span class="pln"> buildMediaSource</span><span class="pun">(</span><span class="typ">Uri</span><span class="pln"> uri</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="typ">DataSource</span><span class="pun">.</span><span class="typ">Factory</span><span class="pln"> dataSourceFactory </span><span class="pun">=</span><span class="pln">
+          </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">DefaultDataSourceFactory</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">,</span><span class="pln"> </span><span class="str">"exoplayer-codelab"</span><span class="pun">);</span><span class="pln">
+  </span><span class="typ">DashMediaSource</span><span class="pun">.</span><span class="typ">Factory</span><span class="pln"> mediaSourceFactory </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">DashMediaSource</span><span class="pun">.</span><span class="typ">Factory</span><span class="pun">(</span><span class="pln">dataSourceFactory</span><span class="pun">);</span><span class="pln">
+  </span><span class="kwd">return</span><span class="pln"> mediaSourceFactory</span><span class="pun">.</span><span class="pln">createMediaSource</span><span class="pun">(</span><span class="pln">uri</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p>By now, you should be familiar with this process. You create a factory for data sources, then a factory for DASH media sources. Finally, you create the media source using the given URI. </p>
+<ol type="1" start="2">
+<li>Change your URI to one which points to a DASH media source. </li>
+</ol>
+<pre><code><span class="kwd">private</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> initializePlayer</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="pun">[...]</span><span class="pln">
+  </span><span class="typ">Uri</span><span class="pln"> uri </span><span class="pun">=</span><span class="pln"> </span><span class="typ">Uri</span><span class="pun">.</span><span class="pln">parse</span><span class="pun">(</span><span class="pln">getString</span><span class="pun">(</span><span class="pln">R</span><span class="pun">.</span><span class="kwd">string</span><span class="pun">.</span><span class="pln">media_url_dash</span><span class="pun">));</span><span class="pln">
+  </span><span class="pun">[...]</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<ol type="1" start="3">
+<li>Restart the app and see adaptive video streaming with DASH in action. It's pretty easy with ExoPlayer!</li>
+</ol>
+<aside class="special"><p><strong>Note: </strong>You are now streaming DASH and using available bandwidth to select tracks. To see this in action, you can:</p>
+<ol type="1" start="1">
+<li>Tap double shift to open <strong>Search Everywhere</strong>.</li>
+<li>Find the <code>AdaptiveTrackSelection</code> class.</li>
+<li>In the class, find <code>updateSelectedTrack</code>—this method is called when the track is updated.</li>
+<li>Put a breakpoint on the line <code>if (selectedIndex == currentSelectedIndex</code>.</li>
+<li>Start your app in debug mode.</li>
+</ol>
+<p>Watch how the breakpoint is hit each time the track selector needs to decide which track to use.</p>
+</aside>
+<h2 is-upgraded=""><strong>Other adaptive streaming formats</strong></h2>
+<p><a href="https://en.wikipedia.org/wiki/HTTP_Live_Streaming" target="_blank">HLS</a> and <a href="https://en.wikipedia.org/wiki/Adaptive_bitrate_streaming#Microsoft_Smooth_Streaming" target="_blank">SmoothStreaming</a> are other commonly used adaptive streaming formats, both of which are supported by ExoPlayer using <a href="https://google.github.io/ExoPlayer/doc/reference/com/google/android/exoplayer2/source/hls/HlsMediaSource.html" target="_blank"><code>HlsMediaSource</code></a> and <a href="https://google.github.io/ExoPlayer/doc/reference/com/google/android/exoplayer2/source/smoothstreaming/SsMediaSource.html" target="_blank"><code>SsMediaSource</code></a>, respectively. For more information about constructing other adaptive media sources, see <a href="https://github.com/google/ExoPlayer/blob/release-v2/demos/main/src/main/java/com/google/android/exoplayer2/demo/PlayerActivity.java" target="_blank">the ExoPlayer demo app</a>.</p>
+
+
+      </div></div></google-codelab-step><google-codelab-step label="Listening for events" duration="15" step="6"><div class="instructions"><div class="inner"><h2 is-upgraded="" class="step-title">6. Listening for events</h2>
+        <aside class="special"><p><strong>Note: </strong>You can continue updating your current project or return to a known working state by importing the project from <code>exoplayer-intro/exoplayer-codelab-03</code>.</p>
+</aside>
+<p>In the previous steps, you learned how to stream progressive and adaptive media streams. ExoPlayer is doing a lot of work for you behind the scenes, including the following: </p>
+<ul>
+<li>Allocating memory</li>
+<li>Downloading container files</li>
+<li>Extracting metadata from the container</li>
+<li>Decoding data </li>
+<li>Rendering video, audio, and text to the screen and loudspeakers</li>
+</ul>
+<p>Sometimes, it's useful to know what ExoPlayer is doing at runtime in order to understand and improve the playback experience for your users. </p>
+<p>For example, you might want to reflect playback state changes in the user interface by doing the following: </p>
+<ul>
+<li>Displaying a loading spinner when the player goes into a buffering state </li>
+<li>Showing an overlay with "watch next" options when the track has ended</li>
+</ul>
+<p>ExoPlayer offers <a href="https://exoplayer.dev/listening-to-player-events.html" target="_blank">several listener interfaces</a> that provide callbacks for useful events. You use a listener to log what state the player is in.</p>
+<h2 is-upgraded=""><strong>Listen up </strong></h2>
+<aside class="special"><p><strong>Note: </strong>When implementing interfaces, it's tempting to put all the interface methods in your <code>PlayerActivity</code> class. However, this can result in lengthy code, which is difficult to read and maintain. A better solution is to use an inner member class to listen for events. This keeps your API clean and tidy. </p>
+</aside>
+<ol type="1" start="1">
+<li>Declare a private member of type <code>PlaybackStateListener</code> in the <code>PlayerActivity</code>.</li>
+<li>Create a <code>TAG</code> constant, which you use for logging later. </li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="kwd">private</span><span class="pln"> </span><span class="typ">PlaybackStateListener</span><span class="pln"> playbackStateListener</span><span class="pun">;</span><span class="pln">
+</span><span class="kwd">private</span><span class="pln"> </span><span class="kwd">static</span><span class="pln"> </span><span class="kwd">final</span><span class="pln"> </span><span class="typ">String</span><span class="pln"> TAG </span><span class="pun">=</span><span class="pln"> </span><span class="typ">PlayerActivity</span><span class="pun">.</span><span class="kwd">class</span><span class="pun">.</span><span class="pln">getName</span><span class="pun">();</span></code></pre>
+<ol type="1" start="3">
+<li>Instantiate the <code>playbackStateListener</code> at the beginning of <code>onCreate</code> (it won't compile yet, but you fix this shortly).</li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="lit">@Override</span><span class="pln">
+</span><span class="kwd">protected</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> onCreate</span><span class="pun">(</span><span class="typ">Bundle</span><span class="pln"> savedInstanceState</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+ </span><span class="kwd">super</span><span class="pun">.</span><span class="pln">onCreate</span><span class="pun">(</span><span class="pln">savedInstanceState</span><span class="pun">);</span><span class="pln">
+ setContentView</span><span class="pun">(</span><span class="pln">R</span><span class="pun">.</span><span class="pln">layout</span><span class="pun">.</span><span class="pln">activity_player</span><span class="pun">);</span><span class="pln">
+
+ playbackStateListener </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">PlaybackStateListener</span><span class="pun">();</span><span class="pln">
+</span><span class="pun">[...]</span></code></pre>
+<ol type="1" start="4">
+<li>Use Quick Fix to create the inner class <code>PlaybackStateListener</code> automatically.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="./Media streaming with ExoPlayer_files/b59ce69a22595ba7.png"></p>
+<p>Screenshot: Quick Fix menu for creating a missing class</p>
+<ol type="1" start="5">
+<li>Implement the <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/Player.EventListener.html" target="_blank"><code>Player.EventListener</code></a> interface. This is used to inform you about important player events, including errors and playback state changes.  </li>
+<li>Override <code>onPlayerStateChanged</code> by adding the following code:</li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="kwd">private</span><span class="pln"> </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">PlaybackStateListener</span><span class="pln"> </span><span class="kwd">implements</span><span class="pln"> </span><span class="typ">Player</span><span class="pun">.</span><span class="typ">EventListener</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+
+ </span><span class="lit">@Override</span><span class="pln">
+ </span><span class="kwd">public</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> onPlayerStateChanged</span><span class="pun">(</span><span class="kwd">boolean</span><span class="pln"> playWhenReady</span><span class="pun">,</span><span class="pln">
+    </span><span class="kwd">int</span><span class="pln"> playbackState</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+   </span><span class="typ">String</span><span class="pln"> stateString</span><span class="pun">;</span><span class="pln">
+   </span><span class="kwd">switch</span><span class="pln"> </span><span class="pun">(</span><span class="pln">playbackState</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+     </span><span class="kwd">case</span><span class="pln"> </span><span class="typ">ExoPlayer</span><span class="pun">.</span><span class="pln">STATE_IDLE</span><span class="pun">:</span><span class="pln">
+       stateString </span><span class="pun">=</span><span class="pln"> </span><span class="str">"ExoPlayer.STATE_IDLE      -"</span><span class="pun">;</span><span class="pln">
+       </span><span class="kwd">break</span><span class="pun">;</span><span class="pln">
+     </span><span class="kwd">case</span><span class="pln"> </span><span class="typ">ExoPlayer</span><span class="pun">.</span><span class="pln">STATE_BUFFERING</span><span class="pun">:</span><span class="pln">
+       stateString </span><span class="pun">=</span><span class="pln"> </span><span class="str">"ExoPlayer.STATE_BUFFERING -"</span><span class="pun">;</span><span class="pln">
+       </span><span class="kwd">break</span><span class="pun">;</span><span class="pln">
+     </span><span class="kwd">case</span><span class="pln"> </span><span class="typ">ExoPlayer</span><span class="pun">.</span><span class="pln">STATE_READY</span><span class="pun">:</span><span class="pln">
+       stateString </span><span class="pun">=</span><span class="pln"> </span><span class="str">"ExoPlayer.STATE_READY     -"</span><span class="pun">;</span><span class="pln">
+       </span><span class="kwd">break</span><span class="pun">;</span><span class="pln">
+     </span><span class="kwd">case</span><span class="pln"> </span><span class="typ">ExoPlayer</span><span class="pun">.</span><span class="pln">STATE_ENDED</span><span class="pun">:</span><span class="pln">
+       stateString </span><span class="pun">=</span><span class="pln"> </span><span class="str">"ExoPlayer.STATE_ENDED     -"</span><span class="pun">;</span><span class="pln">
+       </span><span class="kwd">break</span><span class="pun">;</span><span class="pln">
+     </span><span class="kwd">default</span><span class="pun">:</span><span class="pln">
+       stateString </span><span class="pun">=</span><span class="pln"> </span><span class="str">"UNKNOWN_STATE             -"</span><span class="pun">;</span><span class="pln">
+       </span><span class="kwd">break</span><span class="pun">;</span><span class="pln">
+   </span><span class="pun">}</span><span class="pln">
+   </span><span class="typ">Log</span><span class="pun">.</span><span class="pln">d</span><span class="pun">(</span><span class="pln">TAG</span><span class="pun">,</span><span class="pln"> </span><span class="str">"changed state to "</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> stateString 
+       </span><span class="pun">+</span><span class="pln"> </span><span class="str">" playWhenReady: "</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> playWhenReady</span><span class="pun">);</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p><code>onPlayerStateChanged</code> is called when:</p>
+<ul>
+<li>Play/pause state changes, given by the <code>playWhenReady</code> parameter</li>
+<li>Playback state changes, given by the <code>playbackState</code> parameter</li>
+</ul>
+<p>The player can be in one of the following four states: </p>
+<table>
+<tbody><tr><td colspan="1" rowspan="1"><p><strong>State</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Description</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>ExoPlayer.STATE_IDLE</code></p>
+</td><td colspan="1" rowspan="1"><p>The player has been instantiated, but has not yet been prepared with a <code>MediaSource</code>.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>ExoPlayer.STATE_BUFFERING</code></p>
+</td><td colspan="1" rowspan="1"><p>The player is not able to play from the current position because not enough data has been buffered.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>ExoPlayer.STATE_READY</code></p>
+</td><td colspan="1" rowspan="1"><p>The player is able to immediately play from the current position. This means the player will start playing media automatically if <code>playWhenReady</code> is <code>true</code>. If it is <code>false</code>, the player is paused.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>ExoPlayer.STATE_ENDED</code></p>
+</td><td colspan="1" rowspan="1"><p>The player has finished playing the media.</p>
+</td></tr>
+</tbody></table>
+<aside class="special"><p><strong>Note: </strong>How do you know if your player is actually playing media? Well, all of the following conditions must be met: </p>
+<ul>
+<li>playback state is <code>STATE_READY.</code></li>
+<li><code>playWhenReady</code> is <code>true.</code></li>
+<li>playback is not suppressed for some other reason (for example, loss of <a href="https://developer.android.com/guide/topics/media-apps/audio-focus" target="_blank">audio focus</a>).</li>
+</ul>
+<p>Luckily, ExoPlayer provides a convenience method <code>ExoPlayer.isPlaying</code> for exactly this purpose! Or, if you want to be kept informed when <code>isPlaying</code> changes, you can listen for <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/Player.EventListener.html#onIsPlayingChanged-boolean-" target="_blank"><code>onIsPlayingChanged</code></a>.</p>
+</aside>
+<h2 is-upgraded=""><strong>Register your listener</strong></h2>
+<p>To have your callbacks called, you need to register your <code>playbackStateListener</code> with the player. Do that in <code>initializePlayer</code>.</p>
+<ol type="1" start="1">
+<li>Register the listener before the play is prepared.</li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="kwd">private</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> initializePlayer</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">player </span><span class="pun">==</span><span class="pln"> </span><span class="kwd">null</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="pun">[...]</span><span class="pln">
+    player</span><span class="pun">.</span><span class="pln">addListener</span><span class="pun">(</span><span class="pln">playbackStateListener</span><span class="pun">);</span><span class="pln"> 
+    player</span><span class="pun">.</span><span class="pln">prepare</span><span class="pun">(</span><span class="pln">mediaSource</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<p>Again, you need to tidy up to avoid dangling references from the player which could cause a memory leak. </p>
+<ol type="1" start="2">
+<li>Remove the listener in <code>releasePlayer</code>:</li>
+</ol>
+<h3 is-upgraded=""><strong>PlayerActivity.java</strong></h3>
+<pre><code><span class="kwd">private</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> releasePlayer</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+ </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">player </span><span class="pun">!=</span><span class="pln"> </span><span class="kwd">null</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+   </span><span class="pun">[...]</span><span class="pln">
+   player</span><span class="pun">.</span><span class="pln">removeListener</span><span class="pun">(</span><span class="pln">playbackStateListener</span><span class="pun">);</span><span class="pln">
+   player</span><span class="pun">.</span><span class="pln">release</span><span class="pun">();</span><span class="pln">
+   player </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">null</span><span class="pun">;</span><span class="pln">
+ </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+<ol type="1" start="3">
+<li>Open logcat and run the app. </li>
+<li>Use the UI controls to seek, pause, and resume playback. You should see the playback state change in the logs. </li>
+</ol>
+<h2 is-upgraded="">Go deeper </h2>
+<p>ExoPlayer offers a number of other listeners, which are useful in understanding the user's playback experience. There are listeners for <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/audio/AudioListener.html" target="_blank">audio</a> and <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/video/VideoListener.html" target="_blank">video</a>, as well as an <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/analytics/AnalyticsListener.html" target="_blank"><code>AnalyticsListener</code></a>, which contains the callbacks from all the listeners. Some of the most important methods are the following: </p>
+<ul>
+<li><a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/analytics/AnalyticsListener.html#onRenderedFirstFrame-com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime-android.view.Surface-" target="_blank"><code>onRenderedFirstFrame</code></a> is called when the first frame of a video is rendered. With this, you can calculate how long the user had to wait to see meaningful content on the screen. </li>
+<li><a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/analytics/AnalyticsListener.html#onDroppedVideoFrames-com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime-int-long-" target="_blank"><code>onDroppedVideoFrames</code></a> is called when video frames have been dropped. Dropped frames indicate that playback is janky and the user experience is likely to be poor. </li>
+<li><a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/analytics/AnalyticsListener.html#onAudioUnderrun-com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime-int-long-long-" target="_blank"><code>onAudioUnderrun</code></a> is called when there has been an audio underrun. Underruns cause audible glitches in the sound and are more noticeable than dropped video frames. </li>
+</ul>
+<p><code>AnalyticsListener</code> can be added to the <code>player</code> with <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/SimpleExoPlayer.html#addAnalyticsListener-com.google.android.exoplayer2.analytics.AnalyticsListener-" target="_blank"><code>addAnalyticsListener</code></a>. There are corresponding methods for the <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/audio/AudioListener.html" target="_blank">audio</a> and <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/video/VideoListener.html" target="_blank">video</a> listeners as well.   </p>
+<p>Think about what events are important to your app and your users. For more information, see <a href="https://exoplayer.dev/listening-to-player-events.html" target="_blank">Listening for player events</a>. That's it for event listeners! </p>
+
+
+      </div></div></google-codelab-step><google-codelab-step label="Customize the user interface" duration="15" step="7"><div class="instructions"><div class="inner"><h2 is-upgraded="" class="step-title">7. Customize the user interface</h2>
+        <aside class="special"><p><strong>Note: </strong>You can continue updating your current project or return to a known working state by importing the project from <code>exoplayer-intro/exoplayer-codelab-04</code>.</p>
+</aside>
+<p>So far, you've been using ExoPlayer's <a href="https://github.com/google/ExoPlayer/blob/release-v2/library/ui/src/main/java/com/google/android/exoplayer2/ui/PlayerControlView.java" target="_blank"><code>PlayerControlView</code></a> to display a playback controller to the user. </p>
+<p class="image-container"><img style="width: 624.00px" src="./Media streaming with ExoPlayer_files/bcfe17eebcad9e13.png"></p>
+<p>Screenshot: Default playback controller</p>
+<p>What if you want to change the functionality or look and feel of these controls? Luckily, these controls are highly customizable.  </p>
+<p>The first simple customization is to not use the controller at all. This can be done easily by using the <code>use_controller</code> attribute on the <code>PlayerView</code> element inside <code>activity_player.xml</code>.</p>
+<ol type="1" start="1">
+<li>Set <code>use_controller</code> to <code>false</code> and the control does not show up anymore:</li>
+</ol>
+<h3 is-upgraded=""><strong>activity_player.xml</strong></h3>
+<pre><code><span class="tag">&lt;com.google.android.exoplayer2.ui.PlayerView</span><span class="pln">
+   [...]
+   </span><span class="atn">app:use_controller</span><span class="pun">=</span><span class="atv">"false"</span><span class="tag">/&gt;</span></code></pre>
+<ol type="1" start="2">
+<li>Add the following namespace to your <code>FrameLayout</code>:</li>
+</ol>
+<h3 is-upgraded=""><strong>activity_player.xml</strong></h3>
+<pre><code><span class="tag">&lt;FrameLayout</span><span class="pln">
+  [...] 
+  </span><span class="atn">xmlns:app</span><span class="pun">=</span><span class="atv">"http://schemas.android.com/apk/res-auto"</span><span class="tag">&gt;</span></code></pre>
+<p>Try it now.</p>
+<h2 is-upgraded="">Customize the behaviour</h2>
+<p><code>PlayerControlView</code> has <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/ui/PlayerControlView.html" target="_blank">several attributes</a> which affect its behaviour. Use <code>show_timeout</code>, <code>fastforward_increment</code>, and <code>rewind_increment</code> to customize the controller's behaviour.</p>
+<ol type="1" start="1">
+<li>Remove <code>app:use_controller="false"</code>.</li>
+<li>Change the player view to use <code>show_timeout</code>, <code>fastforward_increment</code> and <code>rewind_increment</code>:</li>
+</ol>
+<h3 is-upgraded=""><strong>activity_player.xml</strong></h3>
+<pre><code><span class="tag">&lt;com.google.android.exoplayer2.ui.PlayerView</span><span class="pln">
+   </span><span class="atn">android:id</span><span class="pun">=</span><span class="atv">"@+id/video_view"</span><span class="pln">
+   </span><span class="atn">android:layout_width</span><span class="pun">=</span><span class="atv">"match_parent"</span><span class="pln">
+   </span><span class="atn">android:layout_height</span><span class="pun">=</span><span class="atv">"match_parent"</span><span class="pln">
+   </span><span class="atn">app:show_timeout</span><span class="pun">=</span><span class="atv">"10000"</span><span class="pln">
+   </span><span class="atn">app:fastforward_increment</span><span class="pun">=</span><span class="atv">"30000"</span><span class="pln">
+   </span><span class="atn">app:rewind_increment</span><span class="pun">=</span><span class="atv">"30000"</span><span class="tag">/&gt;</span></code></pre>
+<ul>
+<li>The <code>show_timeout</code> value tells the <code>PlayerView</code> the delay in milliseconds before the control is hidden after the user last interacted with it. </li>
+<li>The <code>fastforward_increment</code> and <code>rewind_increment</code> values tell the player the time in milliseconds to jump forward or backward when the user taps the fast-forward or rewind buttons.</li>
+</ul>
+<p>The attributes of the <code>PlayerControlView</code> can also be <a href="https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/ui/PlayerControlView.html#setFastForwardIncrementMs-int-" target="_blank">set programmatically</a>.</p>
+<h2 is-upgraded="">Customize the appearance</h2>
+<p>Well, that's a good start. But what if you want to have the <code>PlayerControlView</code> look different or change which buttons are displayed? The implementation of <code>PlayerControlView</code> does not assume that any buttons exist, so it's easy to remove them and add new ones. </p>
+<p>Look at how you can customize the <code>PlayerControlView</code>. </p>
+<ol type="1" start="1">
+<li>Create a new layout file <code>custom_playback_control.xml</code> in the folder <code>player-lib/res/layout/</code>. </li>
+<li>From the context menu of the layout folder, choose <strong>New - Layout resource file</strong> and name it <code>custom_playback_control.xml</code>.</li>
+</ol>
+<p class="image-container"><img style="width: 366.50px" src="./Media streaming with ExoPlayer_files/b18d1e7f7f48be59.png"></p>
+<p>Screenshot: Custom playback control layout file has been created.</p>
+<ol type="1" start="3">
+<li>Copy <a href="https://raw.githubusercontent.com/google/ExoPlayer/release-v2/library/ui/src/main/res/layout/exo_playback_control_view.xml" target="_blank">the original layout file from here</a> into <code>custom_playback_control.xml</code>. </li>
+<li>Remove the <code>ImageButton</code> elements with the id <code>@id/exo_prev</code> and <code>@id/exo_next</code>.</li>
+</ol>
+<p>To use your custom layout, you need to set the attribute <code>app:controller_layout_id</code> of the <code>PlayerView</code> element in the <code>activity_player.xml</code> file. </p>
+<ol type="1" start="1">
+<li>Use the layout ID of your custom file like in the following code snippet:</li>
+</ol>
+<h3 is-upgraded=""><strong>activity_player.xml</strong></h3>
+<pre><code><span class="tag">&lt;com.google.android.exoplayer2.ui.PlayerView</span><span class="pln">  
+   </span><span class="atn">android:id</span><span class="pun">=</span><span class="atv">"@+id/video_view"</span><span class="pln">
+   </span><span class="atn">android:layout_width</span><span class="pun">=</span><span class="atv">"match_parent"</span><span class="pln">
+   </span><span class="atn">android:layout_height</span><span class="pun">=</span><span class="atv">"match_parent"</span><span class="pln">
+   </span><span class="atn">app:controller_layout_id</span><span class="pun">=</span><span class="atv">"@layout/custom_playback_control"</span><span class="tag">/&gt;</span></code></pre>
+<ol type="1" start="2">
+<li>Start the app again. The playback control no longer has the previous and next buttons.</li>
+</ol>
+<p class="image-container"><img style="width: 513.50px" src="./Media streaming with ExoPlayer_files/89e6535a22c8e321.png"></p>
+<p>Screenshot: Custom playback controls with no previous or next buttons</p>
+<aside class="warning"><p><strong>Note: </strong>The <code>PlayerControlView</code> identifies the UI elements it uses by their IDs. So when customizing your layout file, you must not change the IDs of the standard elements, such as <code>@id/exo_play</code> and <code>@id/exo_pause,</code> otherwise <code>PlayerControlView</code> won't be able to find them.</p>
+</aside>
+<p>You can apply whatever changes you like in the layout file. By default, the colors of the Android theme are chosen. You can override this to match the design of your app. </p>
+<ol type="1" start="3">
+<li>Add a <code>android:tint</code> attribute to each <code>ImageButton</code> element:</li>
+</ol>
+<h3 is-upgraded=""><strong>custom_playback_control.xml</strong></h3>
+<pre><code><span class="tag">&lt;ImageButton</span><span class="pln"> </span><span class="atn">android:id</span><span class="pun">=</span><span class="atv">"@id/exo_rew"</span><span class="pln">
+   </span><span class="atn">android:tint</span><span class="pun">=</span><span class="atv">"#FF00A6FF"</span><span class="pln">
+   </span><span class="atn">style</span><span class="pun">=</span><span class="atv">"</span><span class="lit">@style</span><span class="pun">/</span><span class="typ">ExoMediaButton</span><span class="pun">.</span><span class="typ">Rewind</span><span class="atv">"</span><span class="tag">/&gt;</span></code></pre>
+<ol type="1" start="4">
+<li>Change all <code>android:textColor</code> attributes you find in your custom file to the same color: <code>#FF00A6FF</code>.</li>
+</ol>
+<h3 is-upgraded=""><strong>custom_playback_control.xml</strong></h3>
+<pre><code><span class="tag">&lt;TextView</span><span class="pln"> </span><span class="atn">android:id</span><span class="pun">=</span><span class="atv">"@id/exo_position"</span><span class="pln">
+   [...]
+   </span><span class="atn">android:textColor</span><span class="pun">=</span><span class="atv">"#FF00A6FF"</span><span class="tag">/&gt;</span><span class="pln">
+</span><span class="tag">&lt;TextView</span><span class="pln"> </span><span class="atn">android:id</span><span class="pun">=</span><span class="atv">"@id/exo_duration"</span><span class="pln">
+   [...]
+   </span><span class="atn">android:textColor</span><span class="pun">=</span><span class="atv">"#FF00A6FF"</span><span class="tag">/&gt;</span></code></pre>
+<ol type="1" start="5">
+<li>Run the app. Now you have beautiful, colored UI components!</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="./Media streaming with ExoPlayer_files/e9835d65d6dd0634.png"></p>
+<p>Screenshot: Tinted buttons and text view</p>
+<aside class="special"><p><strong>Note: </strong>For your real-world app, you may want to use <a href="https://developer.android.com/guide/topics/ui/themes.html" target="_blank">Android styles</a> instead of setting the attributes directly in the elements of the layout files.</p>
+</aside>
+<h2 is-upgraded=""><strong>Override the default style</strong></h2>
+<p>You just created a custom layout file and referenced it using <code>controller_layout_id</code> in <code>activity_player.xml</code>. </p>
+<p>Another approach is to override the default layout file which <code>PlayerControlView</code> uses. The <a href="https://github.com/google/ExoPlayer/blob/r2.10.5/library/ui/src/main/java/com/google/android/exoplayer2/ui/PlayerControlView.java" target="_blank">source code of <code>PlayerControlView</code></a> tells us that it uses <code>R.layout.exo_playback_control_view</code> for layout. If you create our own layout file with the same filename, the <code>PlayerControlView</code> uses your file instead. </p>
+<ol type="1" start="1">
+<li>Remove the <code>controller_layout_id</code> attribute you just added. </li>
+<li>Delete the file <code>custom_playback_control.xml</code>. </li>
+</ol>
+<p>The <code>PlayerView</code> in <code>activity_player.xml</code> should now look like this:</p>
+<h3 is-upgraded=""><strong>activity_player.xml</strong></h3>
+<pre><code><span class="tag">&lt;com.google.android.exoplayer2.ui.PlayerView</span><span class="pln">
+   </span><span class="atn">android:id</span><span class="pun">=</span><span class="atv">"@+id/video_view"</span><span class="pln">
+   </span><span class="atn">android:layout_width</span><span class="pun">=</span><span class="atv">"match_parent"</span><span class="pln">
+   </span><span class="atn">android:layout_height</span><span class="pun">=</span><span class="atv">"match_parent"</span><span class="tag">/&gt;</span></code></pre>
+<ol type="1" start="3">
+<li>Create a file named  <code>exo_playback_control_view.xml</code> in the <code>res/layout</code> folder of your library module <code>player-lib</code>. </li>
+<li>Insert the following code into <code>exo_playback_control_view.xml</code> to add a play button, a pause button, and an <code>ImageView</code> with a logo:</li>
+</ol>
+<h3 is-upgraded=""><strong>exo_playback_control_view.xml</strong></h3>
+<pre><code><span class="pun">&lt;?</span><span class="pln">xml version</span><span class="pun">=</span><span class="str">"1.0"</span><span class="pln"> encoding</span><span class="pun">=</span><span class="str">"utf-8"</span><span class="pun">?&gt;</span><span class="pln">
+</span><span class="tag">&lt;LinearLayout</span><span class="pln">
+   </span><span class="atn">xmlns:android</span><span class="pun">=</span><span class="atv">"http://schemas.android.com/apk/res/android"</span><span class="pln">
+   </span><span class="atn">android:layout_width</span><span class="pun">=</span><span class="atv">"match_parent"</span><span class="pln">
+   </span><span class="atn">android:layout_height</span><span class="pun">=</span><span class="atv">"wrap_content"</span><span class="pln">
+   </span><span class="atn">android:layout_gravity</span><span class="pun">=</span><span class="atv">"bottom"</span><span class="pln">
+   </span><span class="atn">android:layoutDirection</span><span class="pun">=</span><span class="atv">"ltr"</span><span class="pln">
+   </span><span class="atn">android:background</span><span class="pun">=</span><span class="atv">"#CC000000"</span><span class="pln">
+   </span><span class="atn">android:orientation</span><span class="pun">=</span><span class="atv">"vertical"</span><span class="tag">&gt;</span><span class="pln">
+
+ </span><span class="tag">&lt;LinearLayout</span><span class="pln">
+   </span><span class="atn">android:layout_width</span><span class="pun">=</span><span class="atv">"match_parent"</span><span class="pln">
+   </span><span class="atn">android:layout_height</span><span class="pun">=</span><span class="atv">"wrap_content"</span><span class="pln">
+   </span><span class="atn">android:gravity</span><span class="pun">=</span><span class="atv">"center"</span><span class="pln">
+   </span><span class="atn">android:paddingTop</span><span class="pun">=</span><span class="atv">"4dp"</span><span class="pln">
+   </span><span class="atn">android:orientation</span><span class="pun">=</span><span class="atv">"horizontal"</span><span class="tag">&gt;</span><span class="pln">
+
+   </span><span class="tag">&lt;ImageButton</span><span class="pln"> </span><span class="atn">android:id</span><span class="pun">=</span><span class="atv">"@id/exo_play"</span><span class="pln">
+      </span><span class="atn">style</span><span class="pun">=</span><span class="atv">"</span><span class="lit">@style</span><span class="pun">/</span><span class="typ">ExoMediaButton</span><span class="pun">.</span><span class="typ">Play</span><span class="atv">"</span><span class="tag">/&gt;</span><span class="pln">
+
+   </span><span class="tag">&lt;ImageButton</span><span class="pln"> </span><span class="atn">android:id</span><span class="pun">=</span><span class="atv">"@id/exo_pause"</span><span class="pln">
+      </span><span class="atn">style</span><span class="pun">=</span><span class="atv">"</span><span class="lit">@style</span><span class="pun">/</span><span class="typ">ExoMediaButton</span><span class="pun">.</span><span class="typ">Pause</span><span class="atv">"</span><span class="tag">/&gt;</span><span class="pln">
+
+ </span><span class="tag">&lt;/LinearLayout&gt;</span><span class="pln">
+
+ </span><span class="tag">&lt;ImageView</span><span class="pln">
+     </span><span class="atn">android:contentDescription</span><span class="pun">=</span><span class="atv">"@string/logo"</span><span class="pln">
+     </span><span class="atn">android:src</span><span class="pun">=</span><span class="atv">"@drawable/google_logo"</span><span class="pln">
+     </span><span class="atn">android:layout_width</span><span class="pun">=</span><span class="atv">"match_parent"</span><span class="pln">
+     </span><span class="atn">android:layout_height</span><span class="pun">=</span><span class="atv">"wrap_content"</span><span class="tag">/&gt;</span><span class="pln">
+
+</span><span class="tag">&lt;/LinearLayout&gt;</span></code></pre>
+<p>This demonstrates how you can add your own elements here and mix them with standard control elements. <code>ExoPlayerView</code> now uses your custom control and all logic for hiding and showing when interacting with the control is preserved. </p>
+
+
+      </div></div></google-codelab-step><google-codelab-step label="Congratulations" duration="0" step="8"><div class="instructions"><div class="inner"><h2 is-upgraded="" class="step-title">8. Congratulations</h2>
+        <p>Congratulations! You learned a lot about integrating ExoPlayer with your app.</p>
+<h2 is-upgraded="">Learn more</h2>
+<p>To learn more about ExoPlayer check out <a href="https://exoplayer.dev/hello-world.html" target="_blank">the developer guide</a> and <a href="https://github.com/google/ExoPlayer" target="_blank">source code</a>, and subscribe to the <a href="https://medium.com/google-exoplayer" target="_blank">ExoPlayer blog</a>.</p>
+
+
+      </div></div></google-codelab-step></div><div id="controls"><div id="fabs"><a href="https://codelabs.developers.google.com/codelabs/exoplayer-intro/#" id="previous-step" title="Previous step" disappear="">Back</a><div class="spacer"></div><a href="https://codelabs.developers.google.com/codelabs/exoplayer-intro/#" id="next-step" title="Next step">Next</a><a href="https://codelabs.developers.google.com/" id="done" hidden="" title="Codelab complete">Done</a></div></div></div></google-codelab>
+
+  <script src="./Media streaming with ExoPlayer_files/native-shim.js"></script>
+  <script src="./Media streaming with ExoPlayer_files/custom-elements.min.js"></script>
+  <script src="./Media streaming with ExoPlayer_files/prettify.js"></script>
+  <script src="./Media streaming with ExoPlayer_files/codelab-elements.js"></script>
+
+
+
+</body></html>
